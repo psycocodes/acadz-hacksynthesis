@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { ActivityIndicator, Button, Modal, Portal, Provider, Text } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
+import { router } from 'expo-router';
+
+const NOT_LOADING = -1.0;
 
 const ScanDoc = () => {
     const [images, setImages] = useState([
     ]);
     const [lastImgId, setLastImgId] = useState(0);
+    const [loading, setLoading] = useState(NOT_LOADING);
 
     const addImage = (imguri) => {
         const newImgId = lastImgId + 1;
@@ -44,12 +48,13 @@ const ScanDoc = () => {
             const imageInfo = await FileSystem.getInfoAsync(imageUri);
             let imageSizeInMB = imageInfo.size / 1024 / 1024;
             if (imageSizeInMB > 1) {
-                const compressedImage = await compressImage(result.assets[0].uri, 0.99 / imageSizeInMB);
+                const mratio = imageSizeInMB<1.5 ? 0.7 : imageSizeInMB<4 ? 0.5 : 0.1;
+                const compressedImage = await compressImage(result.assets[0].uri, mratio);
                 imageUri = compressedImage.uri;
 
                 // Check the size of the image
                 const c_imageInfo = await FileSystem.getInfoAsync(compressedImage.uri);
-                const imageSizeInMB = c_imageInfo.size / 1024 / 1024; // Convert to MB
+                imageSizeInMB = c_imageInfo.size / 1024 / 1024; // Convert to MB
             }
             console.log(`Final image size: ${imageSizeInMB.toFixed(2)} MB`);
 
@@ -57,13 +62,21 @@ const ScanDoc = () => {
         }
     };
 
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
     const getData = async () => {
+        setLoading(0.0);
         let fullDat = '';
-        for (let img of images) {
+        for (let i=0; i<images.length; i++) {
+            const img = images[i];
             const dat = await performOCR(img.uri);
             fullDat += dat + "\n\n";
+            setLoading((i+1)/images.length);
         }
-        console.log(fullDat);
+        await wait(500);
+        setLoading(NOT_LOADING);
+        // console.log(fullDat);
+          router.push({ pathname: '../transcript', params: { transcript : fullDat } });
     }
 
     const performOCR = async (imgUri) => {
@@ -100,6 +113,7 @@ const ScanDoc = () => {
     };
 
     return (
+        <Provider>
         <View style={styles.container}>
             <Text style={styles.title}>Scan a Document</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
@@ -117,7 +131,16 @@ const ScanDoc = () => {
                     Get Data
                 </Button>
             </View>
+            {/* Overlay loading indicator */}
+        <Portal>
+          <Modal visible={loading!==NOT_LOADING} dismissable={false} contentContainerStyle={styles.modal}>
+            <ActivityIndicator animating={true} size="large" />
+            <Text style={styles.loadingText}>{`Loading... ${(100*loading).toFixed(2)} %`}</Text>
+          </Modal>
+        </Portal>
         </View>
+        
+        </Provider>
     );
 };
 
@@ -158,7 +181,18 @@ const styles = StyleSheet.create({
     bottomButtons: {
         flexDirection: 'row',
         gap: 10,
-    }
+    },
+    modal: {
+      backgroundColor: '#00000055',
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    loadingText: {
+      marginTop: 10,
+      color: 'white',
+    },
 });
 
 export default ScanDoc;
