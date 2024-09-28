@@ -10,6 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.20.0",
     "axios": "^1.7.7",
     "expo": "~51.0.28",
     "expo-file-system": "^17.0.1",

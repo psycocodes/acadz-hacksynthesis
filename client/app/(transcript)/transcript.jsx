@@ -1,5 +1,5 @@
 
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, TextInput, Alert } from 'react-native';
 import { Provider, Text, Button  } from 'react-native-paper';
@@ -23,6 +23,9 @@ const TranscriptScreen = () => {
     const cancelEdit = () => {
         setEditedTranscript('');
         setEditingMode(false);
+    }
+    const summarize = () => {
+        router.push({ pathname: '../summary', params: { transcript: transcript } });
     }
 
     return (
@@ -61,7 +64,7 @@ const TranscriptScreen = () => {
                             </Button>
                         </View>
                     }
-                    <Button mode="contained" disabled={editingMode}>
+                    <Button mode="contained" disabled={editingMode} onPress={summarize}>
                         Summarize
                     </Button>
                     <Button mode="contained" disabled={editingMode}>
