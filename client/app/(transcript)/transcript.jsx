@@ -10,7 +10,6 @@ const TranscriptScreen = () => {
     const [transcript, setTranscript] = useState(useLocalSearchParams().transcript);
     if (!transcript) Alert.alert('Transcript loading failed!');
 
-
     const startEdit = () => {
         setEditedTranscript(transcript);
         setEditingMode(true);
@@ -26,6 +25,9 @@ const TranscriptScreen = () => {
     }
     const summarize = () => {
         router.push({ pathname: '../summary', params: { transcript: transcript } });
+    }
+    const flashcards = () => {
+        router.push({ pathname: '../flashcards', params: { transcript: transcript } });
     }
 
     return (
@@ -67,7 +69,7 @@ const TranscriptScreen = () => {
                     <Button mode="contained" disabled={editingMode} onPress={summarize}>
                         Summarize
                     </Button>
-                    <Button mode="contained" disabled={editingMode}>
+                    <Button mode="contained" disabled={editingMode} onPress={flashcards}>
                         Flashcards
                     </Button>
                     <Button mode="contained" disabled={editingMode}>
