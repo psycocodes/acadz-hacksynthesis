@@ -7,5 +7,6 @@ import logoSmall from "../assets/images/logo-small.png";
 import empty from "../assets/images/empty.png";
 import notebookCreate from "../assets/images/notebook-create.png";
 import groupCreate from "../assets/images/group-create.png";
+import noFiles from "../assets/images/nofiles.png";
 
-export default { profile, thumbnail, cards, path, logo, logoSmall, empty, notebookCreate, groupCreate };
+export default { profile, thumbnail, cards, path, logo, logoSmall, empty, notebookCreate, groupCreate, noFiles};
