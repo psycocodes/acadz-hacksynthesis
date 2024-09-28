@@ -56,7 +56,7 @@ const Home = () => {
         </View>
         <View className="flex flex-col justify-center items-center gap-2">
           <TouchableOpacity
-            onPress={() => router.push("/add-new")}
+            onPress={() => router.push("/question")}
             activeOpacity={0.7}
             className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center p-10 border border-gray-100`}
           >
