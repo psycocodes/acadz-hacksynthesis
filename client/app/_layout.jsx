@@ -40,6 +40,7 @@ export default function App() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tools)" options={{ headerShown: false }} />
         <Stack.Screen name="(transcript)" options={{ headerShown: false }} />
+        <Stack.Screen name="(fsessions)" options={{ headerShown: false }} />
       </Stack>
     </>
   );
