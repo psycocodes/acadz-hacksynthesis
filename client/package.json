@@ -25,7 +25,9 @@
     "react-native-gesture-handler": "^2.20.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-paper": "^5.12.5",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-xml2js": "^1.0.3",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
