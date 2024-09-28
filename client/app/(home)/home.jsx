@@ -12,26 +12,30 @@ const Home = () => {
         className="flex-row justify-between items-center mt-12 mx-8"
       >
         <Image
-          className="h-[30px] w-[30px]"
+          className="h-[20px] w-[20px]"
           source={images.logoSmall}
           resizeMode="contain"
         />
 
         <View className="flex-row items-center gap-7">
           <Image
-            className="h-[30px] w-[30px]"
+            className="h-[20px] w-[20px]"
             source={icons.profile}
             resizeMode="contain"
           />
           <Image
-            className="h-[30px] w-[10px]"
+            className="h-[20px] w-[10px]"
             source={icons.menu}
             resizeMode="contain"
           />
         </View>
       </View>
-      <Text className=" text-gray-100 font-plight text-s mt-10 p-10 text-center">
-        {" "}
+      <Image
+            className="h-[200px] w-full"
+            source={images.noFiles}
+            resizeMode="contain"
+          />
+      <Text className=" text-gray-100 font-plight text-s px-10 text-center pb-5">
         Click on the buttons to Add a NoteBook or a Group.
       </Text>
       <View className="flex-row justify-center items-center mt-8 gap-2">
@@ -39,7 +43,7 @@ const Home = () => {
           <TouchableOpacity
             onPress={() => router.push("/add-new")}
             activeOpacity={0.7}
-            className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center p-10 border-2 border-gray-100`}
+            className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center p-10 border border-gray-100`}
           >
             <Image
               className="h-[70px] w-[70px]"
@@ -54,7 +58,7 @@ const Home = () => {
           <TouchableOpacity
             onPress={() => router.push("/add-new")}
             activeOpacity={0.7}
-            className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center p-10 border-2 border-gray-100`}
+            className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center p-10 border border-gray-100`}
           >
             <Image
               className="h-[70px] w-[70px]"
