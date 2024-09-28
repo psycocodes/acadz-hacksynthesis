@@ -29,14 +29,6 @@ const FlashCardSession = () => {
         />
       </View>
       <View className="max-w-full h-3/5 bg-gradient-to-r from-red-500 to-orange-500 mx-8 mt-10 rounded-3xl">
-        <Swipeable
-          renderLeftActions={()=>}
-          renderRightActions={()=>{}})}
-          onSwipeableOpen={(direction) => {
-            console.log(direction); // "left" | "right"
-            direction === "left" ? swipeFromLeftOpen : swipeFromRightOpen;
-          }}
-        >
           <LinearGradient
             colors={["#FDC830", "#F37335"]}
             className="w-full h-full rounded-3xl"
@@ -54,7 +46,6 @@ const FlashCardSession = () => {
               </Text>
             </ScrollView>
           </LinearGradient>
-        </Swipeable>
       </View>
     </SafeAreaView>
   );
