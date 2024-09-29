@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from "axios";
 import { Text, View, TextInput, Button } from "react-native";
 import { router } from "expo-router";
 import { ActivityIndicator, Modal, Portal, Provider } from "react-native-paper";
+
 
 async function sendForTranscription(audioUrl, setter) {
   const API_KEY = "f700b044cbb6434bbc4409f4315cd8c6";
@@ -79,30 +80,40 @@ export default function AudioRecorder() {
 
   return (
     <Provider>
-      <View style={{ padding: 20 }}>
-        <TextInput
-          value={audioUrl}
-          onChangeText={setAudioUrl}
-          placeholder="Enter audio file URL"
-          style={{
-            borderColor: "gray",
-            borderWidth: 1,
-            marginBottom: 10,
-            padding: 8,
-          }}
-        />
-        <Button title="Start Transcription" onPress={handleTranscription} />
-        <Portal>
-          <Modal
-            visible={loading}
-            dismissable={false}
-            contentContainerStyle={styles.modal}
-          >
-            <ActivityIndicator animating={true} size="large" />
-            <Text style={styles.loadingText}>Loading...</Text>
-          </Modal>
-        </Portal>
-      </View>
+      <SafeAreaView className="h-full w-full bg-primary">
+        <View style={{ padding: 20 }}>
+          <Text className="text-white font-psemibold text-lg">Enter Audio URL</Text>
+          <TextInput
+            value={audioUrl}
+            onChangeText={setAudioUrl}
+            style={{
+              borderColor: "gray",
+              borderWidth: 1,
+              marginBottom: 10,
+              padding: 8,
+            }}
+            className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-green-400 px-3 py-2 text-gray-100 font-psemibold text-xs`}
+          />
+          {/* <Button title="Start Transcription" onPress={handleTranscription} /> */}
+          <TouchableOpacity
+                onPress={() => handleDifficulty('easy')}
+                activeOpacity={0.7}
+                className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-green-400 px-3 py-2`}
+              >
+                <Text className='text-green-100 font-psemibold text-xs'> Start Transcription </Text>
+              </TouchableOpacity>
+          <Portal>
+            <Modal
+              visible={loading}
+              dismissable={false}
+              contentContainerStyle={styles.modal}
+            >
+              <ActivityIndicator animating={true} size="large" />
+              <Text style={styles.loadingText}>Loading...</Text>
+            </Modal>
+          </Portal>
+        </View>
+      </SafeAreaView>
     </Provider>
   );
 }

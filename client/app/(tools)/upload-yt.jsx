@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, StyleSheet, Image, SafeAreaView } from 'react-native';
 import axios from 'axios';
 import { router } from 'expo-router';
 import { ActivityIndicator, Modal, Portal, Provider } from 'react-native-paper';
-
 const YoutubeToTranscript = () => {
     const [youtubeLink, setYoutubeLink] = useState('');
     const [loading, setLoading] = useState(false);
@@ -101,32 +100,33 @@ const YoutubeToTranscript = () => {
 
     return (
         <Provider>
-            <View style={styles.container}>
-                <Text>Enter video link:</Text>
-                <TextInput
-                    style={styles.input}
-                    value={youtubeLink}
-                    onChangeText={text => {
-                        setYoutubeLink(text);
-                    }}
-                />
-                <Button title="Show Video Info" onPress={() => fetchVideoDetails(getVideoID(youtubeLink))} disabled={loadingInfo} />
-                <Button title="Generate Transcript" onPress={getTranscript} disabled={!infoFetched || loading} />
-
-                {videoDetails && (
-                    <View style={styles.videoInfoContainer}>
-                        <Image source={{ uri: videoDetails.thumbnail }} style={styles.thumbnail} />
-                        <Text style={styles.title}>{videoDetails.title}</Text>
-                        <Text style={styles.channel}>By: {videoDetails.channelTitle}</Text>
-                    </View>
-                )}
-                <Portal>
-                    <Modal visible={loading} dismissable={false} contentContainerStyle={styles.modal}>
-                        <ActivityIndicator animating={true} size="large" />
-                        <Text style={styles.loadingText}>Loading... </Text>
-                    </Modal>
-                </Portal>
-            </View>
+            <SafeAreaView className=' h-full w-full bg-primary'>
+                <View style={styles.container}>
+                    <Text>Enter video link:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={youtubeLink}
+                        onChangeText={text => {
+                            setYoutubeLink(text);
+                        }}
+                    />
+                    <Button title="Show Video Info" onPress={() => fetchVideoDetails(getVideoID(youtubeLink))} disabled={loadingInfo} />
+                    <Button title="Generate Transcript" onPress={getTranscript} disabled={!infoFetched || loading} />
+                    {videoDetails && (
+                        <View style={styles.videoInfoContainer}>
+                            <Image source={{ uri: videoDetails.thumbnail }} style={styles.thumbnail} />
+                            <Text style={styles.title}>{videoDetails.title}</Text>
+                            <Text style={styles.channel}>By: {videoDetails.channelTitle}</Text>
+                        </View>
+                    )}
+                    <Portal>
+                        <Modal visible={loading} dismissable={false} contentContainerStyle={styles.modal}>
+                            <ActivityIndicator animating={true} size="large" />
+                            <Text style={styles.loadingText}>Loading... </Text>
+                        </Modal>
+                    </Portal>
+                </View>
+            </SafeAreaView>
         </Provider>
     );
 };

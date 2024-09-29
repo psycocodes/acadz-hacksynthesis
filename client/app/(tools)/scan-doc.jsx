@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Modal, Portal, Provider, Text } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { router } from 'expo-router';
+
 
 const NOT_LOADING = -1.0;
 
@@ -114,31 +115,32 @@ const ScanDoc = () => {
 
     return (
         <Provider>
-            <View style={styles.container}>
-                <Text style={styles.title}>Scan a Document</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
-                    {images.map((image) => (
-                        <Image key={image.id} source={{ uri: image.uri }}
-                            style={[styles.image, image.id === lastImgId ? styles.lastImage : {}]} />
-                    ))}
-                </ScrollView>
-                <View style={styles.bottomButtons}>
-
-                    <Button mode="contained" style={styles.button} onPress={pickImage}>
-                        Add Image
-                    </Button>
-                    <Button mode="contained" style={styles.button} onPress={getData}>
-                        Get Data
-                    </Button>
+            <SafeAreaView className="h-full w-full bg-primary">
+                <View style={styles.container}>
+                    <Text className=" text-white font-psemibold text-lg">Scan a Document</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
+                        {images.map((image) => (
+                            <Image key={image.id} source={{ uri: image.uri }}
+                                style={[styles.image, image.id === lastImgId ? styles.lastImage : {}]} />
+                        ))}
+                    </ScrollView>
+                    <View style={styles.bottomButtons}>
+                        <Button mode="contained" style={styles.button} onPress={pickImage}>
+                            Add Image
+                        </Button>
+                        <Button mode="contained" style={styles.button} onPress={getData}>
+                            Get Data
+                        </Button>
+                    </View>
+                    {/* Overlay loading indicator */}
+                    <Portal>
+                        <Modal visible={loading !== NOT_LOADING} dismissable={false} contentContainerStyle={styles.modal}>
+                            <ActivityIndicator animating={true} size="large" />
+                            <Text style={styles.loadingText}>{`Loading... ${(100 * loading).toFixed(2)} %`}</Text>
+                        </Modal>
+                    </Portal>
                 </View>
-                {/* Overlay loading indicator */}
-                <Portal>
-                    <Modal visible={loading !== NOT_LOADING} dismissable={false} contentContainerStyle={styles.modal}>
-                        <ActivityIndicator animating={true} size="large" />
-                        <Text style={styles.loadingText}>{`Loading... ${(100 * loading).toFixed(2)} %`}</Text>
-                    </Modal>
-                </Portal>
-            </View>
+            </SafeAreaView>
 
         </Provider>
     );
@@ -150,7 +152,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 16,
-        backgroundColor: '#fff',
     },
     title: {
         fontSize: 20,
