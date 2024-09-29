@@ -112,13 +112,13 @@ const YoutubeToTranscript = () => {
         </View>
       )}
 
-      {/* {loading ? (
+      {loading ? (
         <Text style={styles.loadingText}>Generating transcript...</Text>
       ) : (
         <ScrollView style={styles.transcriptBox}>
           <Text>{transcript}</Text>
         </ScrollView>
-      )} */}
+      )}
     </View>
   );
 };
