@@ -14,7 +14,7 @@ const HomeLayout = () => {
           }}
         />
         <Stack.Screen
-          name="add-new"
+          name="notebook"
           options={{
             headerShown: false,
           }}

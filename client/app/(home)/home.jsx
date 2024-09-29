@@ -227,6 +227,7 @@ const Home = () => {
 
     const openNotebook = (notebookName) => {
         console.log('open notebook: ' + notebookName);
+        router.push({ pathname: 'notebook', params: { path: `${currentPath}$_notebooks/${notebookName}` } });
     };
     const clearStorage = async () => {
         try {
@@ -239,9 +240,6 @@ const Home = () => {
         }
     };
 
-    // Navigate back to the parent folder
-
-    const rname = () => ('hello_' + Math.floor(Math.random() * 1000));
     return (
         <Provider>
             <SafeAreaView className="h-full w-full bg-primary">
