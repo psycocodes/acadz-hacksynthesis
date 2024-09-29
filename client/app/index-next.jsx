@@ -59,7 +59,7 @@ export default function Home() {
                 </Text>
               </View>
               <TouchableOpacity
-                onPress={() => router.push("/home")}
+                onPress={() => router.push("/question")}
                 activeOpacity={0.7}
                 className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center mx-8 border border-gray-100 mb-4`}
               >
