@@ -1,7 +1,7 @@
 import { Image, SafeAreaView, StyleSheet, Text, Touchable, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { icons } from "../../constants/";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Button, IconButton } from "react-native-paper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
