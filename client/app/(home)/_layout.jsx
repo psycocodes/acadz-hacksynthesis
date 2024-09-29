@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
-import { PaperProvider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 
 const HomeLayout = () => {
@@ -15,13 +14,7 @@ const HomeLayout = () => {
           }}
         />
         <Stack.Screen
-          name="home-alt"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="add-new"
+          name="notebook"
           options={{
             headerShown: false,
           }}
