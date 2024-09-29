@@ -29,6 +29,9 @@ const TranscriptScreen = () => {
     const flashcards = () => {
         router.push({ pathname: '../flashcards', params: { transcript: transcript } });
     }
+    const ytSuggest = () => {
+        router.push({ pathname: '../yt-suggest', params: { transcript: transcript } });
+    }
 
     return (
         <Provider>
@@ -72,7 +75,7 @@ const TranscriptScreen = () => {
                     <Button mode="contained" disabled={editingMode} onPress={flashcards}>
                         Flashcards
                     </Button>
-                    <Button mode="contained" disabled={editingMode}>
+                    <Button mode="contained" disabled={editingMode} onPress={ytSuggest}>
                         Youtube video suggestions
                     </Button>
                 </View>
