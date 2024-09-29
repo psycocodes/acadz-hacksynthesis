@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Alert, FlatList } from 'react-native';
 import { Provider, Text, Portal, Modal, ActivityIndicator, IconButton, Button  } from 'react-native-paper';
@@ -95,7 +95,11 @@ const FlashcardScreen = () => {
                     Add manually
                 </Button>
                 </View>
-                <Button mode="contained" style={styles.endButton}>
+                <Button mode="contained"
+                style={styles.endButton}
+                onPress={() => {
+                    router.push({ pathname: "../question", params: { flashcards: JSON.stringify(flashcards) } });
+                }}>
                     Start Session
                 </Button>
                 <Portal>
