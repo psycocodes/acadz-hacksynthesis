@@ -8,5 +8,7 @@ import empty from "../assets/images/empty.png";
 import notebookCreate from "../assets/images/notebook-create.png";
 import groupCreate from "../assets/images/group-create.png";
 import noFiles from "../assets/images/nofiles.png";
+import bg from "../assets/images/bg.png";
+import studentAnimated from "../assets/images/student.gif";
 
-export default { profile, thumbnail, cards, path, logo, logoSmall, empty, notebookCreate, groupCreate, noFiles};
+export default { profile, thumbnail, cards, path, logo, logoSmall, empty, notebookCreate, groupCreate, noFiles, bg, studentAnimated};
