@@ -35,7 +35,7 @@ const NotebookScreen = () => {
     };
     return (
         <SafeAreaView className="h-full w-full bg-primary">
-            <View
+            {/* <View
                 style={styles.navbar}
             >
                 <Image
@@ -51,7 +51,7 @@ const NotebookScreen = () => {
                         resizeMode="contain"
                     />
                 </View>
-            </View>
+            </View> */}
             <View style={styles.buttonsContainer}>
                 <IconButton
                 icon="microphone-variant"
@@ -85,7 +85,7 @@ const NotebookScreen = () => {
             
             <View style={styles.otherContainer}>
                 {!transcript &&
-                    <Text style={styles.helpText}>
+                    <Text className=' text-gray-500 font-psemibold text-xs  px-5 text-center'>
                         Choose any of the above options to create transcript/content
                         {'\n'}{'\n'}
                         Then you can use it to generate Summary, Flashcards, Youtube Suggestions
