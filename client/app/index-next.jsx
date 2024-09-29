@@ -3,16 +3,14 @@ import React from "react";
 import {
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   View,
   Image,
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { images } from "../constants/";
-import { CustomButton } from "../components";
 import { IconButton } from "react-native-paper";
 import { useEffect, useRef } from "react";
 import { Animated } from "react-native";
@@ -73,7 +71,7 @@ export default function Home() {
                 />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => router.push("/home-alt")}
+                onPress={() => {}}
                 activeOpacity={0.7}
                 className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center mx-8 border border-gray-100`}
               >
@@ -86,14 +84,6 @@ export default function Home() {
                   size={30}
                 />
               </TouchableOpacity>
-              {/* <Image
-                  className="h-[100px] w-[300px]"
-                  source={images.logo}
-                  resizeMode="contain"
-                />
-                <Text className="font-pregular text-l text-white p-5">
-                  The Future of Smarter Learning
-                </Text> */}
             </View>
           </Animated.View>
         </ScrollView>
