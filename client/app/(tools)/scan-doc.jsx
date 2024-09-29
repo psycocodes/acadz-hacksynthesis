@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Modal, Portal, Provider, Text } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -107,8 +107,9 @@ const ScanDoc = () => {
 
             return result;
         } catch (error) {
-            console.error(error.message);
-            console.log('Error performing OCR.');
+            Alert.alert('Oops!', 'Server is busy, please try again later!');
+            // console.error(error.message);
+            // console.log('Error performing OCR.');
         }
     };
 

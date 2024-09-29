@@ -11,6 +11,9 @@ import { useRouter } from "expo-router";
 import { images } from "../constants/";
 import { useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();
 
 
 export default function Home() {
