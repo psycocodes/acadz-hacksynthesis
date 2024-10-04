@@ -4,8 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { PaperProvider } from 'react-native-paper';
 
 // Importing Screens
-import WelcomeScreen from './app/Welcome';
-import HomeScreen from './app/Home';
+import WelcomeScreen from './screens/Welcome';
+import HomeScreen from './screens/Home';
 // import NotebookScreen from './screens/Notebook';
 
 // import RecordLectureScreen from './screens/RecordLecture';
