@@ -1,14 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView, ScrollView, View, Image, ImageBackground, Animated, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
 import { Images } from "../constants/";
 
 
-export default function Home() {
+export default function WelcomeScreen({ navigation }) {
     const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity
     const [isVisible, setIsVisible] = useState(true); // State to control visibility
-    const router = useRouter();
 
     useEffect(() => {
         // Start the fade-out animation
@@ -18,9 +16,9 @@ export default function Home() {
             useNativeDriver: true, // Use native driver for performance
         }).start(() => {
             setIsVisible(false); // Hide the current screen after fade-out
-            router.replace('/index-next'); // Navigate to the next screen
+            navigation.navigate('Home') // Navigate to the next screen
         });
-    }, [fadeAnim, router]);
+    }, [fadeAnim, navigation]);
 
     return (
         isVisible && (

@@ -1,11 +1,10 @@
 import { Alert, BackHandler, FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Icons, Images } from "../../constants/";
+import { Icons, Images } from "../constants/";
 import { TouchableOpacity } from "react-native";
-import { router } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FAB, IconButton, Provider } from "react-native-paper";
-import AddNewDialog from "../../components/AddNewDialog";
+import AddNewDialog from "../components/AddNewDialog";
 
 
 const EmptyContent = ({ onAdd }) => {
@@ -108,7 +107,7 @@ const ROOT_PATH = '/root/';
 const TYPE_NOTEBOOK = 'notebook';
 const TYPE_GROUP = 'group';
 
-const Home = () => {
+const HomeScreen = ({ navigation }) => {
     const [currentPath, setCurrentPath] = useState(ROOT_PATH);  // Start at root
     const [groups, setGroups] = useState([]);
     const [notebooks, setNotebooks] = useState([]);
@@ -227,7 +226,7 @@ const Home = () => {
 
     const openNotebook = (notebookName) => {
         console.log('open notebook: ' + notebookName);
-        router.push({ pathname: 'notebook', params: { path: `${currentPath}$_notebooks/${notebookName}` } });
+        // router.push({ pathname: 'notebook', params: { path: `${currentPath}$_notebooks/${notebookName}` } });
     };
     const clearStorage = async () => {
         try {
@@ -285,6 +284,6 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default HomeScreen;
 
 const styles = StyleSheet.create({});
