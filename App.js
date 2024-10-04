@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { PaperProvider } from 'react-native-paper';
+import { PaperProvider, MD3DarkTheme, MD2LightTheme } from 'react-native-paper';
 
 // Importing Screens
 import WelcomeScreen from './screens/Welcome';
@@ -22,12 +22,23 @@ import HomeScreen from './screens/Home';
 // import FlashcardSessionReportScreen from './screens/FlashcardSessionReport';
 
 const Stack = createStackNavigator();
+const DefaultTheme = MD3DarkTheme;
+DefaultTheme.colors.background = '#111';
+DefaultTheme.colors.primaryHighlight = '#6200EE';
+DefaultTheme.colors.tertiaryHighlight = '#03DAC6';
 
 export default function App() {
     return (
-        <PaperProvider>
+        <PaperProvider theme={DefaultTheme}>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Welcome">
+                <Stack.Navigator initialRouteName="Welcome" screenOptions={{
+                    presentation: 'modal',
+                    headerStyle: {
+                        backgroundColor: DefaultTheme.colors.primaryContainer,
+                        elevation: 0,
+                    },
+                    headerTintColor: DefaultTheme.colors.onPrimaryContainer, // Text color for the header
+                }}>
                     <Stack.Screen name="Welcome" component={WelcomeScreen} />
                     <Stack.Screen name="Home" component={HomeScreen} />
                     {/* <Stack.Screen name="Notebook" component={NotebookScreen} />

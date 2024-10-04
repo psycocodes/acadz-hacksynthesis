@@ -1,104 +1,104 @@
-import { Alert, BackHandler, FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, BackHandler, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View, Image } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Icons, Images } from "../constants/";
 import { TouchableOpacity } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FAB, IconButton, Provider } from "react-native-paper";
+import { FAB, IconButton, useTheme, Icon } from "react-native-paper";
 import AddNewDialog from "../components/AddNewDialog";
 
 
 const EmptyContent = ({ onAdd }) => {
+    const theme = useTheme();
+    const styles = createEmptyContentStyles(theme);
     const dialog = useRef(null);
     return <View>
         <Image
-            className="h-[200px] w-full"
+            style={styles.image}
             source={Images.noFiles}
             resizeMode="contain"
+            tintColor={theme.colors.secondary}
         />
-        <Text className=" text-gray-100 font-plight text-s px-10 text-center pb-5">
+        <Text style={styles.instructionText}>
             Click on the buttons to Add a NoteBook or a Group.
         </Text>
-        <View className="flex-row justify-center items-center mt-8 gap-2">
-            <View className=" flex flex-col justify-center items-center gap-2">
+        <View style={styles.buttonContainer}>
+            <View style={styles.buttonWrapper}>
                 <TouchableOpacity
                     onPress={() => {
                         dialog.current.showDialog();
                         dialog.current.create(TYPE_NOTEBOOK);
                     }}
                     activeOpacity={0.7}
-                    className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center p-10 border border-gray-100`}
+                    style={styles.button}
                 >
                     <Image
-                        className="h-[70px] w-[70px]"
+                        style={styles.icon}
                         source={Images.notebookCreate}
                         resizeMode="contain"
-                        tintColor="#f3f4f6"
+                        tintColor={theme.colors.primary}
                     />
                 </TouchableOpacity>
-                <Text className=' text-center text-gray-100'>Add Notebook</Text>
+                <Text style={styles.buttonText}>Add Notebook</Text>
             </View>
-            <View className="flex flex-col justify-center items-center gap-2">
+            <View style={styles.buttonWrapper}>
                 <TouchableOpacity
-                    // onPress={() => router.push("/question")}
                     onPress={() => {
                         dialog.current.showDialog();
                         dialog.current.create(TYPE_GROUP);
                     }}
                     activeOpacity={0.7}
-                    className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center p-10 border border-gray-100`}
+                    style={styles.button}
                 >
                     <Image
-                        className="h-[70px] w-[70px]"
+                        style={styles.icon}
                         source={Images.groupCreate}
                         resizeMode="contain"
-                        tintColor="#f3f4f6"
+                        tintColor={theme.colors.primary}
                     />
                 </TouchableOpacity>
-                <Text className="text-center text-gray-100">Add Group</Text>
+                <Text style={styles.buttonText}>Add Group</Text>
             </View>
         </View>
         <AddNewDialog ref={dialog} onDone={onAdd} />
-    </View>
+    </View>;
 }
 
 
 const FilledContent = ({ items, onItemPress, onAdd }) => {
     const dialog = useRef(null);
-    return <View style={{ flex: 1 }}>
+    const theme = useTheme();
+    const styles = createFilledContentStyles(theme);
+    return <View style={styles.container}>
         <FlatList
             data={items}
             renderItem={({ item }) => (
-                <View className="mb-3 mt-2 mx-5 rounded-2xl flex-row items-center justify-around p-2 pr-4 border border-gray-100">
+                <View style={styles.itemContainer}>
                     <TouchableOpacity
                         onPress={() => onItemPress(item)}
                         activeOpacity={0.7}
-                        className={`flex-row items-center mx-4 mr-6`}
+                        style={styles.touchableContainer}
                     >
                         <IconButton
-                            icon={
-                                item.type === "notebook"
-                                    ? "notebook-outline"
-                                    : "folder-outline"
-                            }
-                            iconColor={item.type === "notebook" ? "#6200EE" : "#03DAC6"}
+                            icon={item.type === "notebook" ? "notebook-outline" : "folder-outline"}
+                            iconColor={item.type === "notebook" ? theme.colors.primaryHighlight : theme.colors.tertiaryHighlight}
                             size={30}
                         />
-                        <ScrollView horizontal={true}>
-                            <Text className=" text-white font-pmedium text-sm">
-                                {item.name}
-                            </Text>
-                        </ScrollView>
+                        <Text style={styles.itemText}
+                            numberOfLines={2}>
+                            {item.name}
+                        </Text>
                     </TouchableOpacity>
-                    <IconButton icon="play" iconColor="#F5F5F5" size={30} />
+                    <IconButton icon="play" iconColor={theme.colors.onBackground} size={30} />
                 </View>
             )}
             keyExtractor={(item, index) => index.toString()}
         />
         <FAB
-            style={{ position: 'absolute', margin: 16, right: 0, bottom: 0 }}
+            style={styles.fab}
             icon="plus"
             label="Add"
-            onPress={() => dialog.current.showDialog()} />
+            onPress={() => dialog.current.showDialog()}
+        />
         <AddNewDialog ref={dialog} onDone={onAdd} />
     </View>;
 }
@@ -108,6 +108,9 @@ const TYPE_NOTEBOOK = 'notebook';
 const TYPE_GROUP = 'group';
 
 const HomeScreen = ({ navigation }) => {
+    const theme = useTheme();
+    const styles = createStyles(theme);
+
     const [currentPath, setCurrentPath] = useState(ROOT_PATH);  // Start at root
     const [groups, setGroups] = useState([]);
     const [notebooks, setNotebooks] = useState([]);
@@ -123,28 +126,28 @@ const HomeScreen = ({ navigation }) => {
         }
     }
 
-    useEffect(() => {
-        loadList(currentPath);
-    }, [currentPath]);
-
     const goBack = () => {
-        console.log('on back clicked, curr: ' + currentPath);
         if (currentPath === ROOT_PATH) return false;  // If at root, can't go back
 
-        console.log('on back clicked 2');
         const paths = currentPath.split('/').filter(Boolean);
         paths.pop(); // Remove the last group
         setCurrentPath(paths.length ? `/${paths.join('/')}/` : ROOT_PATH); // If empty, go back to root
         return true;
     };
-    // useEffect(() => {
 
-    //     const backHandler = BackHandler.addEventListener(
-    //         "hardwareBackPress",
-    //         goBack
-    //     );
-    //     return () => backHandler.remove(); // Cleanup on unmount
-    // }, []);
+    useEffect(() => {
+        loadList(currentPath);
+
+        navigation.setOptions({
+            headerLeft: () => (<IconButton
+                icon='arrow-left'
+                onPress={() => { if (!goBack()) navigation.goBack() }}
+                iconColor={theme.colors.onPrimaryContainer}
+            />),
+        });
+        const backHandler = BackHandler.addEventListener("hardwareBackPress", goBack);
+        return () => backHandler.remove(); // Cleanup on unmount
+    }, [navigation, currentPath]);
 
     const loadList = async (path) => {
         try {
@@ -240,50 +243,206 @@ const HomeScreen = ({ navigation }) => {
     };
 
     return (
-        <Provider>
-            <SafeAreaView className="h-full w-full bg-primary">
-                <View
-                    id="navbar"
-                    className="flex-row justify-between items-center mt-12 mx-8"
-                >
-                    <Image
-                        className="h-[20px] w-[20px]"
-                        source={Images.logoSmall}
-                        resizeMode="contain"
+        <View style={styles.container}>
+            <View style={styles.navbar}>
+                <Image
+                    style={styles.logoSmall}
+                    source={Images.logoSmall}
+                    resizeMode="contain"
+                />
+
+                <View style={styles.navIcons}>
+                    <IconButton
+                        icon="account"
+                        style={styles.icon}
+                        size={24}
+
+                        iconColor={theme.colors.onBackground}
                     />
-
-                    <View className="flex-row items-center gap-7">
-                        <Image
-                            className="h-[20px] w-[20px]"
-                            source={Icons.profile}
-                            resizeMode="contain"
-                        />
-                        <TouchableOpacity onPress={clearStorage}>
-                            <Image
-                                className="h-[20px] w-[10px]"
-                                source={Icons.menu}
-                                resizeMode="contain"
-                            />
-                        </TouchableOpacity>
-
-                    </View>
+                    <IconButton
+                        icon="dots-vertical"
+                        size={24}
+                        style={styles.icon}
+                        iconColor={theme.colors.onBackground}
+                        onPress={clearStorage}
+                    />
                 </View>
-                <TouchableOpacity onPress={goBack}>
-                    <Text id="breadcrums" className="text-gray-500 text-s mx-8 mt-4">
-                        {currentPath}
-                    </Text>
-                </TouchableOpacity>
-                {emptyPage &&
-                    <EmptyContent onAdd={onAdd} />
-                }
-                {!emptyPage &&
-                    <FilledContent items={items} onItemPress={onItemPress} onAdd={onAdd} />
-                }
-            </SafeAreaView>
-        </Provider>
+            </View>
+
+            <Text id="breadcrums" style={styles.breadcrumbs}>
+                {currentPath}
+            </Text>
+
+            {emptyPage ? (
+                <EmptyContent onAdd={onAdd} />
+            ) : (
+                <FilledContent items={items} onItemPress={onItemPress} onAdd={onAdd} />
+            )}
+        </View>
     );
 };
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const createStyles = theme => StyleSheet.create({
+    container: {
+        flex: 1,
+        width: '100%',
+        backgroundColor: theme.colors.background,  // Use your primary color hex code or name here
+    },
+    navbar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderColor: theme.colors.onPrimary,
+        padding: 8,
+    },
+    logoSmall: {
+        marginLeft: 6,
+        width: 20,
+        height: 20,
+    },
+    navIcons: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+    },
+    icon: {
+        padding: 0,
+        margin: 0,
+    },
+    breadcrumbs: {
+        color: theme.colors.secondary, // gray-500
+        fontSize: 12,
+        marginHorizontal: 8,
+        marginTop: 4,
+    },
+    ec_image: {
+        height: 200,
+        width: '100%',
+    },
+    ec_instructionText: {
+        color: theme.colors.secondary, // gray-100
+        // fontFamily: 'Plight', // Assuming font-plight is mapped to 'Plight'
+        fontSize: 12,
+        paddingHorizontal: 10,
+        textAlign: 'center',
+        marginBottom: 16,
+    },
+    ec_buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 8,
+        gap: 26,
+    },
+    ec_buttonWrapper: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 4,
+        marginTop: 16,
+    },
+    ec_button: {
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        borderWidth: 1,
+        borderColor: theme.colors.primary, // gray-100
+    },
+    ec_icon: {
+        height: 48,
+        width: 48,
+    },
+    ec_buttonText: {
+        textAlign: 'center',
+        color: theme.colors.primary, // gray-100
+    },
+});
+
+const createEmptyContentStyles = theme => StyleSheet.create({
+    image: {
+        height: 200,
+        width: '100%',
+    },
+    instructionText: {
+        color: theme.colors.secondary, // gray-100
+        // fontFamily: 'Plight', // Assuming font-plight is mapped to 'Plight'
+        fontSize: 12,
+        paddingHorizontal: 10,
+        textAlign: 'center',
+        marginBottom: 16,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 8,
+        gap: 26,
+    },
+    buttonWrapper: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 4,
+        marginTop: 16,
+    },
+    button: {
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        borderWidth: 1,
+        borderColor: theme.colors.primary, // gray-100
+    },
+    icon: {
+        height: 48,
+        width: 48,
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: theme.colors.primary, // gray-100
+    },
+});
+
+
+const createFilledContentStyles = theme => StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    itemContainer: {
+        marginBottom: 12,
+        marginTop: 8,
+        marginHorizontal: 20,
+        borderRadius: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        padding: 8,
+        paddingRight: 16,
+        borderWidth: 1,
+        borderColor: theme.colors.primary, // gray-100
+    },
+    touchableContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginHorizontal: 16,
+        marginRight: 24,
+    },
+    itemText: {
+        color: theme.colors.onBackground,
+        // fontFamily: 'Pmedium', // Assuming 'font-pmedium' maps to 'Pmedium'
+        fontSize: 14,
+        flex: 1,
+    },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+    },
+}); 

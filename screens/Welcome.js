@@ -1,73 +1,71 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect, useRef } from "react";
-import { SafeAreaView, ScrollView, View, Image, ImageBackground, Animated, StyleSheet } from "react-native";
+import React from "react";
+import { View, Image, StyleSheet } from "react-native";
 import { Images } from "../constants/";
+import { useTheme, Button, Text } from "react-native-paper";
 
 
 export default function WelcomeScreen({ navigation }) {
-    const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity
-    const [isVisible, setIsVisible] = useState(true); // State to control visibility
-
-    useEffect(() => {
-        // Start the fade-out animation
-        Animated.timing(fadeAnim, {
-            toValue: 0, // Fade to 0 (invisible)
-            duration: 4000, // Duration of fade-out
-            useNativeDriver: true, // Use native driver for performance
-        }).start(() => {
-            setIsVisible(false); // Hide the current screen after fade-out
-            navigation.navigate('Home') // Navigate to the next screen
-        });
-    }, [fadeAnim, navigation]);
-
+    const styles = createStyles(useTheme());
     return (
-        isVisible && (
-            <ImageBackground
-                source={Images.bg}
-                style={styles.backgroundImage}
-            >
-                <SafeAreaView style={styles.safeArea}>
-                    <StatusBar style="light" />
-                    <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                        <Animated.View style={[styles.animatedView, { opacity: fadeAnim }]}>
-                            <View style={styles.imageContainer}>
-                                <Image
-                                    style={styles.logoImage}
-                                    source={Images.logoSmall}
-                                    resizeMode="contain"
-                                />
-                            </View>
-                        </Animated.View>
-                    </ScrollView>
-                </SafeAreaView>
-            </ImageBackground>
-        )
+        <View style={styles.container}>
+            <Image
+                style={styles.animatedImage}
+                source={Images.studentAnimated}
+                resizeMode="contain"
+            />
+            <View style={styles.textContainer}>
+                <Text style={styles.welcomeText}>
+                    Welcome, <Text style={styles.boldText}>Student</Text>
+                </Text>
+            </View>
+
+            <Button
+                icon="chevron-right"
+                mode="outlined"
+                style={styles.button}
+                onPress={() => navigation.navigate("Home")}>
+                Continue to Dashboard
+            </Button>
+            <Button
+                icon="chevron-right"
+                mode="outlined"
+                style={styles.button}>
+                Load Notes from Device
+            </Button>
+        </View>
     );
 }
 
-const styles = StyleSheet.create({
-    backgroundImage: {
-        flex: 1,
-        width: "100%",
-        resizeMode: "cover",
-        overflow: "hidden",
-    },
-    safeArea: {
-        flex: 1,
-    },
-    scrollViewContent: {
-        height: "100%",
-    },
-    animatedView: {
-        flex: 1,
-    },
-    imageContainer: {
+
+const createStyles = theme => StyleSheet.create({
+    container: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: theme.colors.background,
     },
-    logoImage: {
+    animatedImage: {
         height: 100,
         width: 100,
+        marginLeft: 10,
+    },
+    textContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    welcomeText: {
+        fontFamily: "Poppins-Regular",
+        fontSize: 18,
+        color: "white",
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        paddingTop: 2,
+    },
+    boldText: {
+        fontFamily: "Poppins-Bold",
+        fontSize: 24,
+    },
+    button: {
+        marginHorizontal: 16,
+        marginBottom: 16,
     },
 });

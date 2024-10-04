@@ -1,7 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef } from "react";
 import { SafeAreaView, ScrollView, Text, View, Image, TouchableOpacity, ImageBackground, Animated, StyleSheet } from "react-native";
-import { router } from "expo-router";
 import { Images } from "../constants/";
 import { IconButton } from "react-native-paper";
 
