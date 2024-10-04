@@ -1,6 +1,6 @@
 import { Alert, BackHandler, FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { icons, images } from "../../constants/";
+import { Icons, Images } from "../../constants/";
 import { TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +13,7 @@ const EmptyContent = ({ onAdd }) => {
     return <View>
         <Image
             className="h-[200px] w-full"
-            source={images.noFiles}
+            source={Images.noFiles}
             resizeMode="contain"
         />
         <Text className=" text-gray-100 font-plight text-s px-10 text-center pb-5">
@@ -31,7 +31,7 @@ const EmptyContent = ({ onAdd }) => {
                 >
                     <Image
                         className="h-[70px] w-[70px]"
-                        source={images.notebookCreate}
+                        source={Images.notebookCreate}
                         resizeMode="contain"
                         tintColor="#f3f4f6"
                     />
@@ -50,7 +50,7 @@ const EmptyContent = ({ onAdd }) => {
                 >
                     <Image
                         className="h-[70px] w-[70px]"
-                        source={images.groupCreate}
+                        source={Images.groupCreate}
                         resizeMode="contain"
                         tintColor="#f3f4f6"
                     />
@@ -249,20 +249,20 @@ const Home = () => {
                 >
                     <Image
                         className="h-[20px] w-[20px]"
-                        source={images.logoSmall}
+                        source={Images.logoSmall}
                         resizeMode="contain"
                     />
 
                     <View className="flex-row items-center gap-7">
                         <Image
                             className="h-[20px] w-[20px]"
-                            source={icons.profile}
+                            source={Icons.profile}
                             resizeMode="contain"
                         />
                         <TouchableOpacity onPress={clearStorage}>
                             <Image
                                 className="h-[20px] w-[10px]"
-                                source={icons.menu}
+                                source={Icons.menu}
                                 resizeMode="contain"
                             />
                         </TouchableOpacity>

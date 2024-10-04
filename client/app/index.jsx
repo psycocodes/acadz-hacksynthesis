@@ -1,19 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import {
-    SafeAreaView,
-    ScrollView,
-    View,
-    Image,
-    ImageBackground,
-} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { SafeAreaView, ScrollView, View, Image, ImageBackground, Animated, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { images } from "../constants/";
-import { useEffect, useRef } from 'react';
-import { Animated } from 'react-native';
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-LogBox.ignoreAllLogs();
+import { Images } from "../constants/";
 
 
 export default function Home() {
@@ -32,37 +21,55 @@ export default function Home() {
             router.replace('/index-next'); // Navigate to the next screen
         });
     }, [fadeAnim, router]);
-    return (isVisible && (
-        <ImageBackground
-            source={images.bg}
-            style={{
-                height: null,
-                width: "100%",
-                resizeMode: "cover",
-                overflow: "hidden",
-                flex: 1,
-            }}
-        >
-            <SafeAreaView className="h-full w-full">
-                <StatusBar style="light" />
-                <ScrollView
-                    contentContainerStyle={{
-                        height: "100%",
-                    }}
-                >
-                    <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-                        <View className="flex-1 justify-center items-center">
-                            <Image
-                                className="h-[100px] w-[100px]"
-                                source={images.logoSmall}
-                                resizeMode="contain"
-                            />
 
-                        </View>
-                    </Animated.View>
-                </ScrollView>
-            </SafeAreaView>
-        </ImageBackground>
-    ));
+    return (
+        isVisible && (
+            <ImageBackground
+                source={Images.bg}
+                style={styles.backgroundImage}
+            >
+                <SafeAreaView style={styles.safeArea}>
+                    <StatusBar style="light" />
+                    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                        <Animated.View style={[styles.animatedView, { opacity: fadeAnim }]}>
+                            <View style={styles.imageContainer}>
+                                <Image
+                                    style={styles.logoImage}
+                                    source={Images.logoSmall}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        </Animated.View>
+                    </ScrollView>
+                </SafeAreaView>
+            </ImageBackground>
+        )
+    );
 }
 
+const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1,
+        width: "100%",
+        resizeMode: "cover",
+        overflow: "hidden",
+    },
+    safeArea: {
+        flex: 1,
+    },
+    scrollViewContent: {
+        height: "100%",
+    },
+    animatedView: {
+        flex: 1,
+    },
+    imageContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    logoImage: {
+        height: 100,
+        width: 100,
+    },
+});

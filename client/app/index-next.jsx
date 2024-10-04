@@ -1,93 +1,119 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  ImageBackground,
-} from "react-native";
+import React, { useEffect, useRef } from "react";
+import { SafeAreaView, ScrollView, Text, View, Image, TouchableOpacity, ImageBackground, Animated, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import { images } from "../constants/";
+import { Images } from "../constants/";
 import { IconButton } from "react-native-paper";
-import { useEffect, useRef } from "react";
-import { Animated } from "react-native";
 
 export default function Home() {
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity
+    const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity
 
-  useEffect(() => {
-    // Start the fade-in animation
-    Animated.timing(fadeAnim, {
-      toValue: 1, // Fade to 1 (fully visible)
-      duration: 2000, // Duration of fade-in
-      useNativeDriver: true, // Use native driver for performance
-    }).start();
-  }, [fadeAnim]);
-  return (
-    <ImageBackground
-      source={images.bg}
-      style={{
-        height: null,
+    useEffect(() => {
+        // Start the fade-in animation
+        Animated.timing(fadeAnim, {
+            toValue: 1, // Fade to 1 (fully visible)
+            duration: 2000, // Duration of fade-in
+            useNativeDriver: true, // Use native driver for performance
+        }).start();
+    }, [fadeAnim]);
+
+    return (
+        <ImageBackground source={Images.bg} style={styles.backgroundImage}>
+            <SafeAreaView style={styles.safeArea}>
+                <StatusBar style="light" />
+                <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                    <Animated.View style={[styles.animatedView, { opacity: fadeAnim }]}>
+                        <View style={styles.container}>
+                            <Image
+                                style={styles.animatedImage}
+                                source={Images.studentAnimated}
+                                resizeMode="contain"
+                            />
+                            <View style={styles.textContainer}>
+                                <Text style={styles.welcomeText}>
+                                    Welcome, <Text style={styles.boldText}>Student</Text>
+                                </Text>
+                            </View>
+
+                            <TouchableOpacity
+                                onPress={() => router.push("/home")}
+                                activeOpacity={0.7}
+                                style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>Continue to Dashboard</Text>
+                                <IconButton icon="chevron-right" iconColor="#f3f4f6" size={30} />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={() => { }}
+                                activeOpacity={0.7}
+                                style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>Load Notes from Device</Text>
+                                <IconButton icon="chevron-right" iconColor="#f3f4f6" size={30} />
+                            </TouchableOpacity>
+                        </View>
+                    </Animated.View>
+                </ScrollView>
+            </SafeAreaView>
+        </ImageBackground>
+    );
+}
+
+const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1,
         width: "100%",
         resizeMode: "cover",
         overflow: "hidden",
+    },
+    safeArea: {
         flex: 1,
-      }}
-    >
-      <SafeAreaView className="h-full w-full">
-        <StatusBar style="light" />
-        <ScrollView
-          contentContainerStyle={{
-            height: "100%",
-          }}
-        >
-          <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-            <View className="flex-1 justify-center ">
-              <Image
-                className="h-[100px] w-[100px] ml-10"
-                source={images.studentAnimated}
-                resizeMode="contain"
-              />
-              <View className="flex-row items-center">
-                <Text className="font-pregular text-xl text-white px-10 py-5 pt-2">
-                  Welcome, <Text className="font-pbold text-3xl">Student </Text>
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => router.push("/home")}
-                activeOpacity={0.7}
-                className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center mx-8 border border-gray-100 mb-4`}
-              >
-                <Text className="text-gray-100 ml-7">
-                  Continue to Dashboard
-                </Text>
-                <IconButton
-                  icon="chevron-right"
-                  iconColor="#f3f4f6"
-                  size={30}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {}}
-                activeOpacity={0.7}
-                className={`rounded-xl min-h-[62px] flex flex-row justify-center items-center mx-8 border border-gray-100`}
-              >
-                <Text className="text-gray-100 ml-7">
-                  Load Notes from Device
-                </Text>
-                <IconButton
-                  icon="chevron-right"
-                  iconColor="#f3f4f6"
-                  size={30}
-                />
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </ScrollView>
-      </SafeAreaView>
-    </ImageBackground>
-  );
-}
+    },
+    scrollViewContent: {
+        height: "100%",
+    },
+    animatedView: {
+        flex: 1,
+    },
+    container: {
+        flex: 1,
+        justifyContent: "center",
+    },
+    animatedImage: {
+        height: 100,
+        width: 100,
+        marginLeft: 10,
+    },
+    textContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    welcomeText: {
+        fontFamily: "Poppins-Regular",
+        fontSize: 18,
+        color: "white",
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        paddingTop: 2,
+    },
+    boldText: {
+        fontFamily: "Poppins-Bold",
+        fontSize: 24,
+    },
+    button: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: 62,
+        marginHorizontal: 8,
+        marginBottom: 4,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#f3f4f6",
+    },
+    buttonText: {
+        color: "#f3f4f6",
+        marginLeft: 7,
+    },
+});
