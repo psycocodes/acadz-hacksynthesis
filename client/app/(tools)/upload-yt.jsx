@@ -49,7 +49,7 @@ const YoutubeToTranscript = () => {
         setLoading(true);
         const tdata = await fetchTranscript();
         // const tdata = await fetchTranscript2();
-        
+
         setLoading(false);
         router.push({ pathname: '../transcript', params: { transcript: tdata } });
     }

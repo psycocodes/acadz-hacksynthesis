@@ -108,8 +108,8 @@ const ScanDoc = () => {
             return result;
         } catch (error) {
             Alert.alert('Oops!', 'Server is busy, please try again later!');
-            // console.error(error.message);
-            // console.log('Error performing OCR.');
+            console.error(error.message);
+            console.log('Error performing OCR.');
         }
     };
 
