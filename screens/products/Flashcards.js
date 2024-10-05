@@ -1,12 +1,11 @@
-import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Alert, FlatList } from 'react-native';
 import { Provider, Text, Portal, Modal, ActivityIndicator, IconButton, Button } from 'react-native-paper';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const FlashcardScreen = () => {
+const FlashcardsScreen = ({ navigation, route }) => {
     const [loading, setLoading] = useState(true);
-    const trasncript = useLocalSearchParams().transcript;
+    const trasncript = route.params.transcript;
     const [flashcards, setFlashcards] = useState([]);
 
 
@@ -98,7 +97,7 @@ const FlashcardScreen = () => {
                 <Button mode="contained"
                     style={styles.endButton}
                     onPress={() => {
-                        router.push({ pathname: "../question", params: { flashcards: JSON.stringify(flashcards) } });
+                        // router.push({ pathname: "../question", params: { flashcards: JSON.stringify(flashcards) } });
                     }}>
                     Start Session
                 </Button>
@@ -170,5 +169,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FlashcardScreen;
+export default FlashcardsScreen;
 

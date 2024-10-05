@@ -54,6 +54,7 @@ const YoutubeTranscriptScreen = ({ navigation }) => {
 
         setLoading(false);
         // router.push({ pathname: '../transcript', params: { transcript: tdata } });
+        navigation.navigate('Transcript', { transcript: tdata });
     }
 
     const fetchTranscript2 = async () => {
@@ -189,9 +190,17 @@ const createStyles = theme => StyleSheet.create({
         backgroundColor: '#f4f4f4',
         borderRadius: 5,
     },
+    modal: {
+        backgroundColor: theme.colors.background,
+        padding: 20,
+        margin: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     loadingText: {
-        marginTop: 20,
-        fontStyle: 'italic',
+        marginTop: 10,
+        fontSize: 16,
     },
 });
 

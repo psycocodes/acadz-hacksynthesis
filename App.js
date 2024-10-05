@@ -13,10 +13,11 @@ import ScanDocumentScreen from './screens/tools/ScanDoc';
 import UploadDocumentScreen from './screens/tools/UploadDoc';
 import YoutubeTranscriptScreen from './screens/tools/YtTranscript';
 
-// import TranscriptScreen from './screens/Transcript';
-// import SummaryScreen from './screens/Summary';
-// import FlashcardsScreen from './screens/Flashcards';
-// import YoutubeSuggestionsScreen from './screens/YoutubeSuggestions';
+import TranscriptScreen from './screens/Transcript';
+
+import SummaryScreen from './screens/products/Summary';
+import FlashcardsScreen from './screens/products/Flashcards';
+import YoutubeSuggestionsScreen from './screens/products/YtSuggestions';
 
 // import FlashcardSessionScreen from './screens/FlashcardSession';
 // import FlashcardSessionReportScreen from './screens/FlashcardSessionReport';
@@ -57,12 +58,12 @@ export default function App() {
                     <Stack.Screen name="YoutubeTranscript" component={YoutubeTranscriptScreen} />
                     <Stack.Screen name="UploadDocument" component={UploadDocumentScreen} />
 
-                    {/* <Stack.Screen name="Transcript" component={TranscriptScreen} />
+                    <Stack.Screen name="Transcript" component={TranscriptScreen} />
                     <Stack.Screen name="Summary" component={SummaryScreen} />
                     <Stack.Screen name="Flashcards" component={FlashcardsScreen} />
                     <Stack.Screen name="YoutubeSuggestions" component={YoutubeSuggestionsScreen} />
-                    
-                    <Stack.Screen name="FlashcardSession" component={FlashcardSessionScreen} />
+
+                    {/* <Stack.Screen name="FlashcardSession" component={FlashcardSessionScreen} />
                     <Stack.Screen name="FlashcardSessionReport" component={FlashcardSessionReportScreen} /> */}
                 </Stack.Navigator>
             </NavigationContainer>

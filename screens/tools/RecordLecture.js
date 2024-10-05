@@ -72,6 +72,7 @@ export default function RecordLectureScreen({ navigation }) {
             setLoading(true);
             const data = await sendForTranscription(audioUrl, setTranscript);
             setLoading(false);
+            navigation.navigate('Transcript', { transcript: data });
             // router.push({ pathname: "../transcript", params: { transcript: data } });
         } else {
             console.error("Please enter a valid audio URL");

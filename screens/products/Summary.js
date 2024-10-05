@@ -1,13 +1,12 @@
-import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
 import { Provider, Text, Portal, Modal, ActivityIndicator } from 'react-native-paper';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Markdown from 'react-native-markdown-display';
 
-const SummaryScreen = () => {
+const SummaryScreen = ({ navigation, route }) => {
     const [loading, setLoading] = useState(true);
-    const trasncript = useLocalSearchParams().transcript;
+    const trasncript = route.params.transcript;
     const [title, setTitle] = useState('summary title');
     const [summary, setSummary] = useState('...');
 

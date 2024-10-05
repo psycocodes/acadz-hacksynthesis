@@ -53,7 +53,7 @@ const createStyles = theme => StyleSheet.create({
         alignItems: "center",
     },
     welcomeText: {
-        fontFamily: "Poppins-Regular",
+        // fontFamily: "Poppins-Regular",
         fontSize: 18,
         color: "white",
         paddingHorizontal: 10,
@@ -61,7 +61,7 @@ const createStyles = theme => StyleSheet.create({
         paddingTop: 2,
     },
     boldText: {
-        fontFamily: "Poppins-Bold",
+        // fontFamily: "Poppins-Bold",
         fontSize: 24,
     },
     button: {

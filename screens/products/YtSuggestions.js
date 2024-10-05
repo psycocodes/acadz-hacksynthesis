@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, Alert, StyleSheet, Linking } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import axios from 'axios';
 
-const YTSuggest = () => {
-    const { transcript } = useLocalSearchParams();
+const YoutubeSuggestionsScreen = ({ navigation, route }) => {
+    const { transcript } = route.params;
     const [loading, setLoading] = useState(true);
     const [queries, setQueries] = useState([]);
     const [error, setError] = useState(null);
@@ -171,4 +170,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default YTSuggest;
+export default YoutubeSuggestionsScreen;

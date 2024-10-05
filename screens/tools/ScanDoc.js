@@ -65,7 +65,6 @@ const ScanDocumentScreen = ({ navigation }) => {
             console.log('image picking canceled/failed');
             return;
         }
-        console.log('image picked, uri: ' + imgUri);
 
         imgUri = _validateImage(imgUri);
         if (!imgUri) {
@@ -106,8 +105,9 @@ const ScanDocumentScreen = ({ navigation }) => {
         }
         await wait(500);
         setLoading(NOT_LOADING);
-        // console.log(fullDat);
+        console.log('full data: ' + fullDat);
         // router.push({ pathname: '../transcript', params: { transcript: fullDat } });
+        navigation.navigate('Transcript', { transcript: fullDat });
     }
 
     const performOCR = async (imgUri) => {
@@ -127,7 +127,7 @@ const ScanDocumentScreen = ({ navigation }) => {
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'apikey': process.env.AXIOS_API_KEY, // replace with your actual OCR.space API key
+                        'apikey': process.env.OCRSPACE_API_KEY, // replace with your actual OCR.space API key
                     },
                 }
             );
@@ -152,26 +152,29 @@ const ScanDocumentScreen = ({ navigation }) => {
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollViewInner}>
                 {images.map((image, index) => {
-                    console.log(images);
                     const isLastImg = index === images.length - 1;
 
-                    return <View style={[styles.imageItem, isLastImg ? styles.lastImageItem : {}]}>
-                        <Image source={{ uri: image }} style={styles.image} />
-                        <View style={styles.imageItemOptions}>
-                            <IconButton
-                                icon='camera-retake'
-                                iconColor={theme.colors.onBackground}
-                                style={styles.imageItemOptionIcons}
-                                onPress={() => replaceImage(index)}
-                            />
-                            <IconButton
-                                icon='delete'
-                                iconColor={theme.colors.onBackground}
-                                style={styles.imageItemOptionIcons}
-                                onPress={() => deleteImage(index)}
-                            />
-                        </View>
-                    </View>;
+                    return (
+                        <View
+                            key={index.toString()}
+                            style={[styles.imageItem, isLastImg ? styles.lastImageItem : {}]}
+                        >
+                            <Image source={{ uri: image }} style={styles.image} />
+                            <View style={styles.imageItemOptions}>
+                                <IconButton
+                                    icon='camera-retake'
+                                    iconColor={theme.colors.onBackground}
+                                    style={styles.imageItemOptionIcons}
+                                    onPress={() => replaceImage(index)}
+                                />
+                                <IconButton
+                                    icon='delete'
+                                    iconColor={theme.colors.onBackground}
+                                    style={styles.imageItemOptionIcons}
+                                    onPress={() => deleteImage(index)}
+                                />
+                            </View>
+                        </View>);
                 })}
             </ScrollView>
             <View style={styles.bottomButtons}>
