@@ -32,7 +32,6 @@ class AddNewDialog extends React.Component {
         this.styles = createStyles(theme);
         this.onDone = onDone;
         this.onDone = this.onDone.bind(this);
-        console.log(onDone);
         this.state = {
             visible: false,
             page: 0,
@@ -56,7 +55,7 @@ class AddNewDialog extends React.Component {
         });
     }
     onTextChanged(text) {
-        this.setState({ name: text});
+        this.setState({ name: text });
     }
     create(type) {
         this.setState({ page: 1, type: type });
@@ -66,7 +65,7 @@ class AddNewDialog extends React.Component {
         return (
             <Portal>
                 <Dialog visible={this.state.visible} onDismiss={this.hideDialog}>
-                    <Dialog.Title>{'Add New '+this.state.type}</Dialog.Title>
+                    <Dialog.Title>{'Add New ' + this.state.type}</Dialog.Title>
                     {this.state.page == 0 &&
                         (<View style={this.styles.buttonsContainer}>
                             <Button

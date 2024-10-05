@@ -1,4 +1,4 @@
-import { Alert, BackHandler, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View, Image } from "react-native";
+import { Alert, BackHandler, FlatList, StyleSheet, Text, View, Image } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Icons, Images } from "../constants/";
 import { TouchableOpacity } from "react-native";
@@ -65,6 +65,7 @@ const EmptyContent = ({ onAdd }) => {
 
 
 const FilledContent = ({ items, onItemPress, onAdd }) => {
+    console.log('filled content updated with items: ', items);
     const dialog = useRef(null);
     const theme = useTheme();
     const styles = createFilledContentStyles(theme);
@@ -80,7 +81,7 @@ const FilledContent = ({ items, onItemPress, onAdd }) => {
                     >
                         <IconButton
                             icon={item.type === "notebook" ? "notebook-outline" : "folder-outline"}
-                            iconColor={item.type === "notebook" ? theme.colors.primaryHighlight : theme.colors.tertiaryHighlight}
+                            iconColor={item.type === "notebook" ? theme.colors.primaryContainer : theme.colors.tertiaryContainer}
                             size={30}
                         />
                         <Text style={styles.itemText}
@@ -112,31 +113,19 @@ const HomeScreen = ({ navigation }) => {
     const styles = createStyles(theme);
 
     const [currentPath, setCurrentPath] = useState(ROOT_PATH);  // Start at root
-    const [groups, setGroups] = useState([]);
-    const [notebooks, setNotebooks] = useState([]);
-
-    const emptyPage = groups.length === 0 && notebooks.length === 0;
-    const items = [];
-    if (!emptyPage) {
-        for (let i = 0; i < groups.length; i++) {
-            items.push({ 'name': groups[i], 'type': TYPE_GROUP })
-        }
-        for (let i = 0; i < notebooks.length; i++) {
-            items.push({ 'name': notebooks[i], 'type': TYPE_NOTEBOOK })
-        }
-    }
-
-    const goBack = () => {
-        if (currentPath === ROOT_PATH) return false;  // If at root, can't go back
-
-        const paths = currentPath.split('/').filter(Boolean);
-        paths.pop(); // Remove the last group
-        setCurrentPath(paths.length ? `/${paths.join('/')}/` : ROOT_PATH); // If empty, go back to root
-        return true;
-    };
+    const [items, setItems] = useState([]);
 
     useEffect(() => {
         loadList(currentPath);
+
+        const goBack = () => {
+            if (currentPath === ROOT_PATH) return false;  // If at root, can't go back
+
+            const paths = currentPath.split('/').filter(Boolean);
+            paths.pop(); // Remove the last group
+            setCurrentPath(paths.length ? `/${paths.join('/')}/` : ROOT_PATH); // If empty, go back to root
+            return true;
+        };
 
         navigation.setOptions({
             headerLeft: () => (<IconButton
@@ -144,6 +133,11 @@ const HomeScreen = ({ navigation }) => {
                 onPress={() => { if (!goBack()) navigation.goBack() }}
                 iconColor={theme.colors.onPrimaryContainer}
             />),
+            headerRight: () => (<IconButton
+                icon="dots-vertical"
+                onPress={clearStorage}
+                iconColor={theme.colors.onPrimaryContainer}
+            />)
         });
         const backHandler = BackHandler.addEventListener("hardwareBackPress", goBack);
         return () => backHandler.remove(); // Cleanup on unmount
@@ -154,65 +148,53 @@ const HomeScreen = ({ navigation }) => {
             const storedGroups = await AsyncStorage.getItem(path);
             const storedNotebooks = await AsyncStorage.getItem(`${path}_notebooks`); // Use a different key for notebooks
             // group name cant be '_notebooks'
-            if (storedGroups !== null) setGroups(JSON.parse(storedGroups));
-            else setGroups([]);
+            const groups = storedGroups ? JSON.parse(storedGroups) : [];
+            const notebooks = storedNotebooks ? JSON.parse(storedNotebooks) : [];
 
-            if (storedNotebooks !== null) setNotebooks(JSON.parse(storedNotebooks));
-            else setNotebooks([]);
+            const items = [];
+            for (let i = 0; i < groups.length; i++) {
+                items.push({ 'name': groups[i], 'type': TYPE_GROUP })
+            }
+            for (let i = 0; i < notebooks.length; i++) {
+                items.push({ 'name': notebooks[i], 'type': TYPE_NOTEBOOK })
+            }
+            setItems(items);
         } catch (e) {
             console.error('Failed to load data', e);
         }
     };
 
-    const onAdd = (name, type) => {
-        if (type === TYPE_NOTEBOOK) addNotebook(name);
-        else addGroup(name);
+    console.log('rendering at: ' + currentPath);
+
+    const addItem = async (name, type) => {
+        // Validity checks
+        name = name.trim();
+        const isNotebook = type === TYPE_NOTEBOOK;
+        const typeN = isNotebook ? 'Notebook' : 'Group';
+        console.log(`to add ${typeN} named '${name}' at path: ${currentPath}`);
+
+        if (!name) {
+            Alert.alert('Error', typeN + ' name cannot be empty');
+            return;
+        }
+
+        try {
+            const storageKey = currentPath + (isNotebook ? '_notebooks' : '');
+            const mItems = items.filter(x => x.type === type).map(x => x.name);
+
+            if (mItems.includes(name)) {
+                Alert.alert('Error', typeN + ' already exists!');
+                return;
+            }
+
+            await AsyncStorage.setItem(storageKey, JSON.stringify([...mItems, name]));
+            setItems([...items, { name: name, type: type }]);
+
+        } catch (e) {
+            console.error('Failed to create ' + typeN, e);
+            Alert.alert('Error', 'Error while creating ' + typeN);
+        }
     };
-
-    const addNotebook = async (name) => {
-        //validity checks
-        name = name.trim();
-        if (!name) {
-            Alert.alert('Error', 'Notebook name cannot be empty');
-            return;
-        }
-
-        try {
-            if (notebooks.includes(name)) {
-                Alert.alert('Error', 'Notebook already exists!');
-                return;
-            }
-
-            const updatedNotebooks = [...notebooks, name];
-            await AsyncStorage.setItem(`${currentPath}_notebooks`, JSON.stringify(updatedNotebooks));
-            setNotebooks(updatedNotebooks);
-        } catch (e) {
-            console.error('Failed to create notebook', e);
-            Alert.alert('Error', 'Error while creating notebook!');
-        }
-    }
-    const addGroup = async (name) => {
-        //validity checks
-        name = name.trim();
-        if (!name) {
-            Alert.alert('Error', 'Group name cannot be empty');
-            return;
-        }
-
-        try {
-            if (groups.includes(name)) {
-                Alert.alert('Error', 'Group already exists!');
-                return;
-            }
-
-            const updatedGroups = [...groups, name];
-            await AsyncStorage.setItem(currentPath, JSON.stringify(updatedGroups));
-            setGroups(updatedGroups);
-        } catch (e) {
-            console.error('Failed to create Group', e);
-            Alert.alert('Error', 'Error while creating Group!');
-        }
-    }
 
     const onItemPress = (item) => {
         if (item.type === TYPE_NOTEBOOK) {
@@ -230,12 +212,15 @@ const HomeScreen = ({ navigation }) => {
     const openNotebook = (notebookName) => {
         console.log('open notebook: ' + notebookName);
         // router.push({ pathname: 'notebook', params: { path: `${currentPath}$_notebooks/${notebookName}` } });
+        navigation.navigate('Notebook', {
+            path: `${currentPath}$_notebooks/${notebookName}`
+        });
     };
     const clearStorage = async () => {
         try {
             await AsyncStorage.clear(); // Clears AsyncStorage
-            setGroups([]);  // Reset groups state to an empty array
-            setNotebooks([]);  // Reset notebooks state to an empty array
+            setCurrentPath(ROOT_PATH);
+            setItems([]);  // Reset state to an empty array
             console.log('Storage cleared successfully');
         } catch (e) {
             console.error('Failed to clear storage', e);
@@ -244,39 +229,14 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.navbar}>
-                <Image
-                    style={styles.logoSmall}
-                    source={Images.logoSmall}
-                    resizeMode="contain"
-                />
-
-                <View style={styles.navIcons}>
-                    <IconButton
-                        icon="account"
-                        style={styles.icon}
-                        size={24}
-
-                        iconColor={theme.colors.onBackground}
-                    />
-                    <IconButton
-                        icon="dots-vertical"
-                        size={24}
-                        style={styles.icon}
-                        iconColor={theme.colors.onBackground}
-                        onPress={clearStorage}
-                    />
-                </View>
-            </View>
-
             <Text id="breadcrums" style={styles.breadcrumbs}>
                 {currentPath}
             </Text>
 
-            {emptyPage ? (
-                <EmptyContent onAdd={onAdd} />
+            {items.length === 0 ? (
+                <EmptyContent onAdd={addItem} />
             ) : (
-                <FilledContent items={items} onItemPress={onItemPress} onAdd={onAdd} />
+                <FilledContent items={items} onItemPress={onItemPress} onAdd={addItem} />
             )}
         </View>
     );
@@ -290,33 +250,13 @@ const createStyles = theme => StyleSheet.create({
         width: '100%',
         backgroundColor: theme.colors.background,  // Use your primary color hex code or name here
     },
-    navbar: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: theme.colors.onPrimary,
-        padding: 8,
-    },
-    logoSmall: {
-        marginLeft: 6,
-        width: 20,
-        height: 20,
-    },
-    navIcons: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-    },
-    icon: {
-        padding: 0,
-        margin: 0,
-    },
     breadcrumbs: {
         color: theme.colors.secondary, // gray-500
         fontSize: 12,
-        marginHorizontal: 8,
-        marginTop: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderBottomWidth: 1,
+        borderColor: theme.colors.onPrimary,
     },
     ec_image: {
         height: 200,

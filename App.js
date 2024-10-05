@@ -6,7 +6,7 @@ import { PaperProvider, MD3DarkTheme, MD2LightTheme } from 'react-native-paper';
 // Importing Screens
 import WelcomeScreen from './screens/Welcome';
 import HomeScreen from './screens/Home';
-// import NotebookScreen from './screens/Notebook';
+import NotebookScreen from './screens/Notebook';
 
 // import RecordLectureScreen from './screens/RecordLecture';
 // import ScanDocumentScreen from './screens/ScanDoc';
@@ -23,9 +23,16 @@ import HomeScreen from './screens/Home';
 
 const Stack = createStackNavigator();
 const DefaultTheme = MD3DarkTheme;
-DefaultTheme.colors.background = '#111';
-DefaultTheme.colors.primaryHighlight = '#6200EE';
-DefaultTheme.colors.tertiaryHighlight = '#03DAC6';
+DefaultTheme.colors = {
+    ...MD3DarkTheme.colors,
+    background: '#111',
+    onTertiary: '#946300',
+    tertiaryContainer: '#eb9d02',
+}
+// "tertiary": "rgb(128, 81, 88)", 
+// "onTertiary": "rgb(255, 255, 255)",
+// "tertiaryContainer": "rgb(255, 217, 221)",
+// "onTertiaryContainer": "rgb(50, 16, 23)",
 
 export default function App() {
     return (
@@ -41,9 +48,9 @@ export default function App() {
                 }}>
                     <Stack.Screen name="Welcome" component={WelcomeScreen} />
                     <Stack.Screen name="Home" component={HomeScreen} />
-                    {/* <Stack.Screen name="Notebook" component={NotebookScreen} />
-                    
-                    <Stack.Screen name="RecordLecture" component={RecordLectureScreen} />
+                    <Stack.Screen name="Notebook" component={NotebookScreen} />
+
+                    {/* <Stack.Screen name="RecordLecture" component={RecordLectureScreen} />
                     <Stack.Screen name="ScanDocument" component={ScanDocumentScreen} />
                     <Stack.Screen name="UploadDocument" component={UploadDocumentScreen} />
                     <Stack.Screen name="YoutubeTranscript" component={YoutubeTranscriptScreen} />

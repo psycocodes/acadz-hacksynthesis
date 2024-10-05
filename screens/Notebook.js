@@ -1,88 +1,92 @@
-import { Image, SafeAreaView, StyleSheet, Text, Touchable, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
-import { icons } from "../../constants/";
-import { router, useLocalSearchParams } from "expo-router";
-import { Button, IconButton } from "react-native-paper";
+import { StyleSheet, Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Button, IconButton, useTheme } from "react-native-paper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const NotebookScreen = () => {
-    const {path} = useLocalSearchParams();
+const NotebookScreen = ({ navigation, route }) => {
+    const theme = useTheme();
+    const styles = createStyles(theme);
+
+    const { path } = route.params;
+    console.log(path);
+
     const [transcript, setTranscript] = useState(null);
     const [summary, setSummary] = useState(null);
     const [flashcards, setFlashcards] = useState(null);
     const [ytsugg, setYtsugg] = useState(null);
 
 
-    const loadDatas = async () => {
-        try {
-            const data = await AsyncStorage.getItem(path);
-            const parsedData = data ? JSON.parse(data) : {};
-            if (!('transcript' in parsedData)) return;
+    useEffect(() => {
+        // loadDatas();
 
-            setTranscript(parsedData.transcript);
-            if ('summary' in parsedData) {
-                setSummary(parsedData.summary);
-            }
-            if ('flashcards' in parsedData) {
-                setFlashcards(parsedData.flashcards);
-            }
-            if ('ytsugg' in parsedData) {
-                setYtsugg(parsedData.ytsugg);
-            }
-        } catch (e) {
-            console.error('Failed to load data', e);
-        }
-    };
+        navigation.setOptions({
+            headerLeft: () => (<IconButton
+                icon='arrow-left'
+                onPress={navigation.goBack}
+                iconColor={theme.colors.onPrimaryContainer}
+            />),
+            headerRight: () => (<IconButton
+                icon="dots-vertical"
+                // onPress={clearStorage}
+                iconColor={theme.colors.onPrimaryContainer}
+            />)
+        });
+    }, [navigation]);
+
+    // const loadDatas = async () => {
+    //     try {
+    //         const data = await AsyncStorage.getItem(path);
+    //         const parsedData = data ? JSON.parse(data) : {};
+    //         if (!('transcript' in parsedData)) return;
+
+    //         setTranscript(parsedData.transcript);
+    //         if ('summary' in parsedData) {
+    //             setSummary(parsedData.summary);
+    //         }
+    //         if ('flashcards' in parsedData) {
+    //             setFlashcards(parsedData.flashcards);
+    //         }
+    //         if ('ytsugg' in parsedData) {
+    //             setYtsugg(parsedData.ytsugg);
+    //         }
+    //     } catch (e) {
+    //         console.error('Failed to load data', e);
+    //     }
+    // };
+
     return (
-        <SafeAreaView className="h-full w-full bg-primary">
-            <View
-                style={styles.navbar}
-            >
-                <Image
-                    className="h-[30px] w-[30px]"
-                    source={icons.leftArrow}
-                    resizeMode="contain"
-                />
-
-                <View className="flex-row items-center gap-7">
-                    <Image
-                        className="h-[30px] w-[10px]"
-                        source={icons.menu}
-                        resizeMode="contain"
-                    />
-                </View>
-            </View>
+        <View style={styles.container}>
             <View style={styles.buttonsContainer}>
                 <IconButton
-                icon="microphone-variant"
-                size={42}
-                onPress={() => router.push("/record")}
-                iconColor="#ffaa00"
-                containerColor="#99999955"
+                    icon="microphone-variant"
+                    size={42}
+                    // onPress={() => navigation.navigate("/record")}
+                    iconColor={theme.colors.tertiaryContainer}
+                    containerColor={theme.colors.onSecondary}
                 />
                 <IconButton
-                icon="line-scan"
-                size={42}
-                onPress={() => router.push("/scan-doc")}
-                iconColor="#ffaa00"
-                containerColor="#99999955"
+                    icon="line-scan"
+                    size={42}
+                    // onPress={() => navigation.navigate("/scan-doc")}
+                    iconColor={theme.colors.tertiaryContainer}
+                    containerColor={theme.colors.onSecondary}
                 />
                 <IconButton
-                icon="youtube"
-                size={42}
-                onPress={() => router.push("/upload-yt")}
-                iconColor="#ffaa00"
-                containerColor="#99999955"
+                    icon="youtube"
+                    size={42}
+                    // onPress={() => navigation.navigate("/upload-yt")}
+                    iconColor={theme.colors.tertiaryContainer}
+                    containerColor={theme.colors.onSecondary}
                 />
                 <IconButton
-                icon="file-pdf-box"
-                size={42}
-                onPress={() => router.push("/upload-doc")}
-                iconColor="#ffaa00"
-                containerColor="#99999955"
+                    icon="file-pdf-box"
+                    size={42}
+                    // onPress={() => navigation.navigate("/upload-doc")}
+                    iconColor={theme.colors.tertiaryContainer}
+                    containerColor={theme.colors.onSecondary}
                 />
             </View>
-            
+
             <View style={styles.otherContainer}>
                 {!transcript &&
                     <Text style={styles.helpText}>
@@ -93,70 +97,65 @@ const NotebookScreen = () => {
                 }
                 {transcript &&
                     <Button
-                    mode="contained"
-                    style={styles.button1}>
+                        mode="contained"
+                        style={styles.button1}>
                         Transcript
                     </Button>
                 }
                 {transcript && summary &&
                     <Button
-                    mode="contained"
-                    style={styles.button1}>
+                        mode="contained"
+                        style={styles.button1}>
                         Summary
                     </Button>
                 }
                 {transcript && flashcards &&
                     <Button
-                    mode="contained"
-                    style={styles.button1}>
+                        mode="contained"
+                        style={styles.button1}>
                         Flashcards
                     </Button>
                 }
                 {transcript && ytsugg &&
                     <Button
-                    mode="contained"
-                    style={styles.button1}>
+                        mode="contained"
+                        style={styles.button1}>
                         Youtube Suggestions
                     </Button>
                 }
                 {transcript && !summary &&
                     <Button
-                    mode="outlined"
-                    style={styles.button2}>
+                        mode="outlined"
+                        style={styles.button2}>
                         Generate Summary
                     </Button>
                 }
                 {transcript && !flashcards &&
                     <Button
-                    mode="outlined"
-                    style={styles.button2}>
+                        mode="outlined"
+                        style={styles.button2}>
                         Generate Flashcards
                     </Button>
                 }
                 {transcript && !ytsugg &&
                     <Button
-                    mode="outlined"
-                    style={styles.button2}>
+                        mode="outlined"
+                        style={styles.button2}>
                         Get Youtube Suggestions
                     </Button>
                 }
             </View>
-        </SafeAreaView >
+        </View >
     );
 };
 
 export default NotebookScreen;
 
-const styles = StyleSheet.create({
-    navbar: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 40,
-        paddingHorizontal: 8,
-        marginBottom: 8,
-        // borderWidth: 1,
-        // borderColor: 'white',
+const createStyles = theme => StyleSheet.create({
+
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
     },
     buttonsContainer: {
         flexDirection: 'row',
@@ -165,8 +164,6 @@ const styles = StyleSheet.create({
         gap: 5,
         paddingTop: 15,
         paddingHorizontal: 15,
-        // borderWidth: 1,
-        // borderColor: 'white',
     },
     otherContainer: {
         flex: 1,
@@ -184,7 +181,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#99999922'
     },
     helpText: {
-        color: '#946300',
+        color: theme.colors.onTertiary,
         paddingHorizontal: 8,
         textAlign: 'center',
     }
