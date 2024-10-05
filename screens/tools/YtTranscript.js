@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, ScrollView, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
-import { router } from 'expo-router';
 import { ActivityIndicator, Modal, Portal, Provider } from 'react-native-paper';
 
-const YoutubeToTranscript = () => {
+const YoutubeTranscriptScreen = ({ navigation }) => {
     const [youtubeLink, setYoutubeLink] = useState('');
     const [loading, setLoading] = useState(false);
     const [loadingInfo, setLoadingInfo] = useState(false);
@@ -51,7 +50,7 @@ const YoutubeToTranscript = () => {
         // const tdata = await fetchTranscript2();
 
         setLoading(false);
-        router.push({ pathname: '../transcript', params: { transcript: tdata } });
+        // router.push({ pathname: '../transcript', params: { transcript: tdata } });
     }
 
     const fetchTranscript2 = async () => {
@@ -176,4 +175,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default YoutubeToTranscript;
+export default YoutubeTranscriptScreen;

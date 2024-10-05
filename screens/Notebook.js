@@ -60,28 +60,28 @@ const NotebookScreen = ({ navigation, route }) => {
                 <IconButton
                     icon="microphone-variant"
                     size={42}
-                    // onPress={() => navigation.navigate("/record")}
+                    onPress={() => navigation.navigate("RecordLecture")}
                     iconColor={theme.colors.tertiaryContainer}
                     containerColor={theme.colors.onSecondary}
                 />
                 <IconButton
                     icon="line-scan"
                     size={42}
-                    // onPress={() => navigation.navigate("/scan-doc")}
+                    onPress={() => navigation.navigate("ScanDocument")}
                     iconColor={theme.colors.tertiaryContainer}
                     containerColor={theme.colors.onSecondary}
                 />
                 <IconButton
                     icon="youtube"
                     size={42}
-                    // onPress={() => navigation.navigate("/upload-yt")}
+                    onPress={() => navigation.navigate("YoutubeTranscript")}
                     iconColor={theme.colors.tertiaryContainer}
                     containerColor={theme.colors.onSecondary}
                 />
                 <IconButton
                     icon="file-pdf-box"
                     size={42}
-                    // onPress={() => navigation.navigate("/upload-doc")}
+                    onPress={() => navigation.navigate("UploadDocument")}
                     iconColor={theme.colors.tertiaryContainer}
                     containerColor={theme.colors.onSecondary}
                 />

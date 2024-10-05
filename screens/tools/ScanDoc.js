@@ -5,13 +5,11 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
-import { router } from 'expo-router';
 
 const NOT_LOADING = -1.0;
 
-const ScanDoc = () => {
-    const [images, setImages] = useState([
-    ]);
+const ScanDocumentScreen = ({ navigation }) => {
+    const [images, setImages] = useState([]);
     const [lastImgId, setLastImgId] = useState(0);
     const [loading, setLoading] = useState(NOT_LOADING);
 
@@ -76,7 +74,7 @@ const ScanDoc = () => {
         await wait(500);
         setLoading(NOT_LOADING);
         // console.log(fullDat);
-        router.push({ pathname: '../transcript', params: { transcript: fullDat } });
+        // router.push({ pathname: '../transcript', params: { transcript: fullDat } });
     }
 
     const performOCR = async (imgUri) => {
@@ -196,4 +194,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ScanDoc;
+export default ScanDocumentScreen;

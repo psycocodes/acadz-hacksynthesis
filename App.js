@@ -8,10 +8,10 @@ import WelcomeScreen from './screens/Welcome';
 import HomeScreen from './screens/Home';
 import NotebookScreen from './screens/Notebook';
 
-// import RecordLectureScreen from './screens/RecordLecture';
-// import ScanDocumentScreen from './screens/ScanDoc';
-// import UploadDocumentScreen from './screens/UploadDoc';
-// import YoutubeTranscriptScreen from './screens/YoutubeTranscript';
+import RecordLectureScreen from './screens/tools/RecordLecture';
+import ScanDocumentScreen from './screens/tools/ScanDoc';
+import UploadDocumentScreen from './screens/tools/UploadDoc';
+import YoutubeTranscriptScreen from './screens/tools/YtTranscript';
 
 // import TranscriptScreen from './screens/Transcript';
 // import SummaryScreen from './screens/Summary';
@@ -50,12 +50,12 @@ export default function App() {
                     <Stack.Screen name="Home" component={HomeScreen} />
                     <Stack.Screen name="Notebook" component={NotebookScreen} />
 
-                    {/* <Stack.Screen name="RecordLecture" component={RecordLectureScreen} />
+                    <Stack.Screen name="RecordLecture" component={RecordLectureScreen} />
                     <Stack.Screen name="ScanDocument" component={ScanDocumentScreen} />
-                    <Stack.Screen name="UploadDocument" component={UploadDocumentScreen} />
                     <Stack.Screen name="YoutubeTranscript" component={YoutubeTranscriptScreen} />
-                    
-                    <Stack.Screen name="Transcript" component={TranscriptScreen} />
+                    <Stack.Screen name="UploadDocument" component={UploadDocumentScreen} />
+
+                    {/* <Stack.Screen name="Transcript" component={TranscriptScreen} />
                     <Stack.Screen name="Summary" component={SummaryScreen} />
                     <Stack.Screen name="Flashcards" component={FlashcardsScreen} />
                     <Stack.Screen name="YoutubeSuggestions" component={YoutubeSuggestionsScreen} />

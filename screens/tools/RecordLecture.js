@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { StyleSheet } from 'react-native';
 import axios from "axios";
 import { Text, View, TextInput, Button } from "react-native";
-import { router } from "expo-router";
 import { ActivityIndicator, Modal, Portal, Provider } from "react-native-paper";
 
 async function sendForTranscription(audioUrl, setter) {
@@ -60,7 +59,7 @@ async function sendForTranscription(audioUrl, setter) {
     }
 }
 
-export default function AudioRecorder() {
+export default function RecordLectureScreen({ navigation }) {
     const [transcript, setTranscript] = useState("Transcript");
     const [audioUrl, setAudioUrl] = useState(""); // State for audio URL
     const [loading, setLoading] = useState(false);
@@ -70,7 +69,7 @@ export default function AudioRecorder() {
             setLoading(true);
             const data = await sendForTranscription(audioUrl, setTranscript);
             setLoading(false);
-            router.push({ pathname: "../transcript", params: { transcript: data } });
+            // router.push({ pathname: "../transcript", params: { transcript: data } });
         } else {
             console.error("Please enter a valid audio URL");
         }

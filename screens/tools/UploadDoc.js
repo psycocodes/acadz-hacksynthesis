@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const UploadDoc = () => {
-  return (
-    <View>
-      <Text>UploadDoc</Text>
-    </View>
-  )
+const UploadDocumentScreen = ({ navigation }) => {
+    return (
+        <View>
+            <Text>UploadDoc</Text>
+        </View>
+    )
 }
 
-export default UploadDoc
+export default UploadDocumentScreen
 
 const styles = StyleSheet.create({})
