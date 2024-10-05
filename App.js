@@ -26,6 +26,8 @@ const DefaultTheme = MD3DarkTheme;
 DefaultTheme.colors = {
     ...MD3DarkTheme.colors,
     background: '#111',
+    surface: '#1d1d1d',
+    surfaceVariant: '#2d2c2e',
     onTertiary: '#946300',
     tertiaryContainer: '#eb9d02',
 }

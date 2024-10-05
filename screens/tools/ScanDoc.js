@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Modal, Portal, Provider, Text } from 'react-native-paper';
+import { ActivityIndicator, Button, IconButton, Modal, Portal, Provider, Text, useTheme } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
@@ -9,20 +9,34 @@ import axios from 'axios';
 const NOT_LOADING = -1.0;
 
 const ScanDocumentScreen = ({ navigation }) => {
+    const theme = useTheme();
+    const styles = createStyles(theme);
+
     const [images, setImages] = useState([]);
-    const [lastImgId, setLastImgId] = useState(0);
     const [loading, setLoading] = useState(NOT_LOADING);
 
-    const addImage = (imguri) => {
-        const newImgId = lastImgId + 1;
-        setImages([
-            ...images,
-            { id: newImgId, uri: imguri },
-        ])
-        setLastImgId(newImgId);
+    const _getImageSizeInMB = async (imgUri) => {
+        const imageInfo = await FileSystem.getInfoAsync(imgUri);
+        return imageInfo.size / 1024 / 1024;
     }
 
-    const compressImage = async (uri, ratio) => {
+    const _validateImage = async (imgUri) => { // make image under 1mb
+        let finalImgUri = imgUri;
+        let finalImgSize = await _getImageSizeInMB(finalImgUri);
+
+        if (finalImgSize > 1) {
+            const outputQuality = (finalImgSize < 1.5) ? (0.7) : (finalImgSize < 4 ? 0.5 : 0.1);
+            const compressedImage = await _compressImage(finalImgUri, outputQuality);
+
+            finalImgUri = compressedImage.uri;
+            finalImgSize = _getImageSizeInMB(finalImgUri);
+        }
+        console.log(`Final image size: ${finalImgSize.toFixed(2)} MB`);
+
+        return finalImgUri;
+    };
+
+    const _compressImage = async (uri, ratio) => {
         const manipResult = await ImageManipulator.manipulateAsync(
             uri,
             [{ resize: { width: 800 } }], // Adjust width as needed
@@ -32,7 +46,7 @@ const ScanDocumentScreen = ({ navigation }) => {
         return manipResult;
     };
 
-    const pickImage = async () => {
+    const _pickImage = async () => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Image,
@@ -41,24 +55,43 @@ const ScanDocumentScreen = ({ navigation }) => {
         });
 
         if (!result.canceled) {
-            let imageUri = result.assets[0].uri;
-
-            const imageInfo = await FileSystem.getInfoAsync(imageUri);
-            let imageSizeInMB = imageInfo.size / 1024 / 1024;
-            if (imageSizeInMB > 1) {
-                const mratio = imageSizeInMB < 1.5 ? 0.7 : imageSizeInMB < 4 ? 0.5 : 0.1;
-                const compressedImage = await compressImage(result.assets[0].uri, mratio);
-                imageUri = compressedImage.uri;
-
-                // Check the size of the image
-                const c_imageInfo = await FileSystem.getInfoAsync(compressedImage.uri);
-                imageSizeInMB = c_imageInfo.size / 1024 / 1024; // Convert to MB
-            }
-            console.log(`Final image size: ${imageSizeInMB.toFixed(2)} MB`);
-
-            addImage(imageUri);
+            return result.assets[0].uri;
         }
     };
+
+    const _getPickedImage = async () => {
+        let imgUri = await _pickImage();
+        if (!imgUri) {
+            console.log('image picking canceled/failed');
+            return;
+        }
+        console.log('image picked, uri: ' + imgUri);
+
+        imgUri = _validateImage(imgUri);
+        if (!imgUri) {
+            console.log('image compression failed');
+            return;
+        }
+        return imgUri;
+    }
+
+    const addImage = async () => {
+        const imgUri = await _getPickedImage();
+        setImages([...images, imgUri]);
+    };
+
+    const replaceImage = async (index) => {
+        const imgUri = await _getPickedImage();
+        if (imgUri) {
+            images[index] = imgUri;
+            setImages([...images]);
+        }
+    }
+    const deleteImage = (index) => {
+        images.splice(index, 1);
+        setImages([...images]);
+    }
+
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -112,44 +145,62 @@ const ScanDocumentScreen = ({ navigation }) => {
     };
 
     return (
-        <Provider>
-            <View style={styles.container}>
-                <Text style={styles.title}>Scan a Document</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
-                    {images.map((image) => (
-                        <Image key={image.id} source={{ uri: image.uri }}
-                            style={[styles.image, image.id === lastImgId ? styles.lastImage : {}]} />
-                    ))}
-                </ScrollView>
-                <View style={styles.bottomButtons}>
+        <View style={styles.container}>
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollViewInner}>
+                {images.map((image, index) => {
+                    console.log(images);
+                    const isLastImg = index === images.length - 1;
 
-                    <Button mode="contained" style={styles.button} onPress={pickImage}>
-                        Add Image
-                    </Button>
-                    <Button mode="contained" style={styles.button} onPress={getData}>
-                        Get Data
-                    </Button>
-                </View>
-                {/* Overlay loading indicator */}
-                <Portal>
-                    <Modal visible={loading !== NOT_LOADING} dismissable={false} contentContainerStyle={styles.modal}>
-                        <ActivityIndicator animating={true} size="large" />
-                        <Text style={styles.loadingText}>{`Loading... ${(100 * loading).toFixed(2)} %`}</Text>
-                    </Modal>
-                </Portal>
+                    return <View style={[styles.imageItem, isLastImg ? styles.lastImageItem : {}]}>
+                        <Image source={{ uri: image }} style={styles.image} />
+                        <View style={styles.imageItemOptions}>
+                            <IconButton
+                                icon='camera-retake'
+                                iconColor={theme.colors.onBackground}
+                                style={styles.imageItemOptionIcons}
+                                onPress={() => replaceImage(index)}
+                            />
+                            <IconButton
+                                icon='delete'
+                                iconColor={theme.colors.onBackground}
+                                style={styles.imageItemOptionIcons}
+                                onPress={() => deleteImage(index)}
+                            />
+                        </View>
+                    </View>;
+                })}
+            </ScrollView>
+            <View style={styles.bottomButtons}>
+
+                <Button mode="contained" style={styles.button} onPress={addImage}>
+                    Add Image
+                </Button>
+                <Button mode="contained" style={styles.button} onPress={getData}>
+                    Get Data
+                </Button>
             </View>
-
-        </Provider>
+            {/* Overlay loading indicator */}
+            <Portal>
+                <Modal visible={loading !== NOT_LOADING} dismissable={false} contentContainerStyle={styles.modal}>
+                    <ActivityIndicator animating={true} size="large" />
+                    <Text style={styles.loadingText}>{`Loading... ${(100 * loading).toFixed(2)} %`}</Text>
+                </Modal>
+            </Portal>
+        </View>
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = theme => StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 16,
-        backgroundColor: '#fff',
+        paddingTop: 16,
+        backgroundColor: theme.colors.background,
     },
     title: {
         fontSize: 20,
@@ -159,38 +210,56 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 20,
         padding: 20,
-        borderTopWidth: 2,
-        borderBottomWidth: 2,
-        borderColor: 'black',
-        backgroundColor: '#ddd'
+        paddingVertical: 12,
+        backgroundColor: theme.colors.surface,
+    },
+    scrollViewInner: {
+        alignItems: 'stretch',
+    },
+    imageItem: {
+        width: 300,
+        marginRight: 15,
     },
     image: {
-        width: 300, // Adjust the width as needed
-        height: 'auto', // Adjust the height as needed
-        marginRight: 15,
-        borderColor: 'black',
-        borderWidth: 1,
+        width: '100%',
+        flex: 1,
+        borderRadius: 10,
+        borderColor: theme.colors.background,
+        borderWidth: 5,
+        resizeMode: 'contain',
+        backgroundColor: theme.colors.background,
     },
-    lastImage: {
+    lastImageItem: {
         marginRight: 40,
+    },
+    imageItemOptions: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    },
+    imageItemOptionIcons: {
+        marginVertical: 0,
+        marginLeft: 0,
     },
     button: {
         flex: 1
     },
     bottomButtons: {
         flexDirection: 'row',
-        gap: 10,
+        gap: 16,
+        marginBottom: 36,
+        marginHorizontal: 16,
     },
     modal: {
-        backgroundColor: '#00000055',
+        backgroundColor: theme.colors.background,
         padding: 20,
+        margin: 20,
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
     },
     loadingText: {
         marginTop: 10,
-        color: 'white',
+        fontSize: 16,
     },
 });
 

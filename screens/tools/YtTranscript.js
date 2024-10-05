@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
-import { ActivityIndicator, Modal, Portal, Provider } from 'react-native-paper';
+import { ActivityIndicator, Modal, Portal, Text, TextInput, Button, useTheme, } from 'react-native-paper';
 
 const YoutubeTranscriptScreen = ({ navigation }) => {
+    const theme = useTheme();
+    const styles = createStyles(theme);
+
     const [youtubeLink, setYoutubeLink] = useState('');
     const [loading, setLoading] = useState(false);
     const [loadingInfo, setLoadingInfo] = useState(false);
@@ -99,19 +102,18 @@ const YoutubeTranscriptScreen = ({ navigation }) => {
     };
 
     return (
-        <Provider>
-            <View style={styles.container}>
-                <Text>Enter video link:</Text>
-                <TextInput
-                    style={styles.input}
-                    value={youtubeLink}
-                    onChangeText={text => {
-                        setYoutubeLink(text);
-                    }}
-                />
-                <Button title="Show Video Info" onPress={() => fetchVideoDetails(getVideoID(youtubeLink))} disabled={loadingInfo} />
-                <Button title="Generate Transcript" onPress={getTranscript} disabled={!infoFetched || loading} />
 
+        <View style={styles.container}>
+            <TextInput
+                mode='outlined'
+                style={styles.input}
+                label="Enter youtube video link"
+                value={youtubeLink}
+                onChangeText={text => {
+                    setYoutubeLink(text);
+                }}
+            />
+            <View style={{ flex: 1 }}>
                 {videoDetails && (
                     <View style={styles.videoInfoContainer}>
                         <Image source={{ uri: videoDetails.thumbnail }} style={styles.thumbnail} />
@@ -119,49 +121,67 @@ const YoutubeTranscriptScreen = ({ navigation }) => {
                         <Text style={styles.channel}>By: {videoDetails.channelTitle}</Text>
                     </View>
                 )}
-                <Portal>
-                    <Modal visible={loading} dismissable={false} contentContainerStyle={styles.modal}>
-                        <ActivityIndicator animating={true} size="large" />
-                        <Text style={styles.loadingText}>Loading... </Text>
-                    </Modal>
-                </Portal>
             </View>
-        </Provider>
+
+            <Button
+                onPress={() => fetchVideoDetails(getVideoID(youtubeLink))}
+                disabled={loadingInfo}
+                mode='contained'
+                style={styles.button_info}>
+                Show Video Info
+            </Button>
+            <Button
+                onPress={getTranscript}
+                disabled={!infoFetched || loading}
+                mode='contained'
+                style={styles.button_gen}>
+                Generate Transcript
+            </Button>
+            <Portal>
+                <Modal visible={loading} dismissable={false} contentContainerStyle={styles.modal}>
+                    <ActivityIndicator animating={true} size="large" />
+                    <Text style={styles.loadingText}>Loading... </Text>
+                </Modal>
+            </Portal>
+        </View>
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = theme => StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.background,
     },
     input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
         marginBottom: 20,
-        paddingHorizontal: 10,
+    },
+    button_info: {
+        marginBottom: 12
+    },
+    button_gen: {
+        marginBottom: 20
     },
     videoInfoContainer: {
-        marginTop: 20,
-        padding: 10,
-        backgroundColor: '#f4f4f4',
-        borderRadius: 5,
+        padding: 16,
+        backgroundColor: theme.colors.surface,
+        borderRadius: 15,
     },
     thumbnail: {
         width: '100%',
         height: 200,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     title: {
         fontSize: 16,
         fontWeight: 'bold',
         marginTop: 10,
+        marginBottom: 6,
+        color: theme.colors.onSurface,
     },
     channel: {
         fontSize: 14,
-        color: 'gray',
+        color: theme.colors.onSurfaceVariant,
     },
     transcriptBox: {
         marginTop: 20,

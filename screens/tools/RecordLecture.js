@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { StyleSheet } from 'react-native';
 import axios from "axios";
-import { Text, View, TextInput, Button } from "react-native";
-import { ActivityIndicator, Modal, Portal, Provider } from "react-native-paper";
+import { View } from "react-native";
+import { ActivityIndicator, Modal, Portal, Button, Text, TextInput, useTheme } from "react-native-paper";
 
 async function sendForTranscription(audioUrl, setter) {
     try {
@@ -60,6 +60,9 @@ async function sendForTranscription(audioUrl, setter) {
 }
 
 export default function RecordLectureScreen({ navigation }) {
+    const theme = useTheme();
+    const styles = createStyles(theme);
+
     const [transcript, setTranscript] = useState("Transcript");
     const [audioUrl, setAudioUrl] = useState(""); // State for audio URL
     const [loading, setLoading] = useState(false);
@@ -76,38 +79,43 @@ export default function RecordLectureScreen({ navigation }) {
     };
 
     return (
-        <Provider>
-            <View style={{ padding: 20 }}>
-                <TextInput
-                    value={audioUrl}
-                    onChangeText={setAudioUrl}
-                    placeholder="Enter audio file URL"
-                    style={{
-                        borderColor: "gray",
-                        borderWidth: 1,
-                        marginBottom: 10,
-                        padding: 8,
-                    }}
-                />
-                <Button title="Start Transcription" onPress={handleTranscription} />
-                <Portal>
-                    <Modal
-                        visible={loading}
-                        dismissable={false}
-                        contentContainerStyle={styles.modal}
-                    >
-                        <ActivityIndicator animating={true} size="large" />
-                        <Text style={styles.loadingText}>Loading...</Text>
-                    </Modal>
-                </Portal>
-            </View>
-        </Provider>
+        <View style={styles.container}>
+            <TextInput
+                mode='outlined'
+                value={audioUrl}
+                onChangeText={setAudioUrl}
+                label="Enter audio file URL"
+                style={styles.urlText}
+            />
+            <Button mode='contained' onPress={handleTranscription}>
+                Start Transcription
+            </Button>
+            <Portal>
+                <Modal
+                    visible={loading}
+                    dismissable={false}
+                    contentContainerStyle={styles.modal}
+                >
+                    <ActivityIndicator animating={true} size="large" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </Modal>
+            </Portal>
+        </View>
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = theme => StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        paddingHorizontal: 16,
+    },
+    urlText: {
+        marginVertical: 16,
+        marginHorizontal: 8,
+    },
     modal: {
-        backgroundColor: 'white',
+        backgroundColor: theme.colors.background,
         padding: 20,
         margin: 20,
         borderRadius: 10,
