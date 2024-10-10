@@ -21,6 +21,7 @@ import YoutubeSuggestionsScreen from './screens/products/YtSuggestions';
 
 import FlashcardSessionScreen from './screens/fsessions/Session';
 import FlashcardSessionResultScreen from './screens/fsessions/Result';
+import TestScreenAudio from './screens/TestScreenAudio';
 
 const Stack = createStackNavigator();
 const DefaultTheme = MD3DarkTheme;
@@ -65,6 +66,9 @@ export default function App() {
 
                     <Stack.Screen name="FlashcardSession" component={FlashcardSessionScreen} />
                     <Stack.Screen name="FlashcardSessionResult" component={FlashcardSessionResultScreen} />
+
+                    <Stack.Screen name="TestAudio" component={TestScreenAudio} />
+
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>

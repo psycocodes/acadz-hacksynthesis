@@ -29,7 +29,8 @@ export default function WelcomeScreen({ navigation }) {
             <Button
                 icon="chevron-right"
                 mode="outlined"
-                style={styles.button}>
+                style={styles.button}
+                onPress={() => navigation.navigate("TestAudio")}>
                 Load Notes from Device
             </Button>
         </View>

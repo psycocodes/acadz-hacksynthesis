@@ -25,7 +25,18 @@
         "web": {
             "favicon": "./assets/favicon.png"
         },
-        "plugins": [],
+        "plugins": [
+            [
+                "expo-speech-recognition",
+                {
+                    "microphonePermission": "Allow AcadZ to use the microphone.",
+                    "speechRecognitionPermission": "Allow AcadZ to use speech recognition.",
+                    "androidSpeechServicePackages": [
+                        "com.google.android.googlequicksearchbox"
+                    ]
+                }
+            ]
+        ],
         "extra": {
             "eas": {
                 "projectId": "2e3afbe0-fc60-4cec-b16f-9d5dbdce67ff"
