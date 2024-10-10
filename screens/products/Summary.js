@@ -1,15 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Provider, Text, Portal, Modal, ActivityIndicator } from 'react-native-paper';
+import { Text, Portal, Modal, ActivityIndicator, useTheme } from 'react-native-paper';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Markdown from 'react-native-markdown-display';
 
-const SummaryScreen = ({ navigation, route }) => {
-    const [loading, setLoading] = useState(true);
+const SummaryScreen = ({ route }) => {
     const trasncript = route.params.transcript;
-    const [title, setTitle] = useState('summary title');
-    const [summary, setSummary] = useState('...');
+    const theme = useTheme();
+    const styles = createStyles(theme);
 
+    const [loading, setLoading] = useState(true);
+    const [title, setTitle] = useState('Title of Summary');
+    const [summary, setSummary] = useState('...');
+    // console.log(summary);
+    //     const summary = `**Introduction:**
+    // Electrostatics is a branch of physics studying the behavior of stationary electric 
+    // charges. It provides the foundation for understanding electricity and its applications.
+
+    // **Key Concepts:**
+
+    // * **Electric Charge:**
+    //     * Two types: positive and negative.
+    //     * Protons carry a positive charge, while electrons carry a negative charge.    
+    //     * Like charges repel, and opposite charges attract.
+    // * **Coulomb's Law:**
+    //     * Quantifies the force between two charged objects.
+    //     * The force is directly proportional to the product of the charges and inversely proportional to the square of the distance between them.
+    //     * Equation: F = k * (q1 * q2) / r², where k is Coulomb's constant.
+    // * **Electric Field:**
+    //     * Force per unit charge experienced by a positive test charge.
+    //     * Equation: E = F / q.
+    //     * Visualized using field lines, which indicate direction and strength.
+    // * **Electric Potential:**
+    //     * Work done per unit charge to bring a positive test charge from infinity to a 
+    // point.
+    //     * Relationship with electric field: E = -dV / dr.
+    // * **Conductors and Insulators:**
+    //     * Conductors (e.g., metals) allow free movement of electric charges.
+    //     * Insulators (e.g., rubber) restrict charge movement.
+    //     * Excess charge on a conductor resides on its surface.
+
+    // **Conclusion:**
+    // Electrostatics introduces the fundamental principles of stationary charges, including Coulomb's Law, electric fields, electric potential, and the behavior of conductors and insulators. These concepts are essential for understanding more complex topics in electricity and magnetism.`;
 
     const onAppear = async () => {
         const prompt = createPrompt(trasncript);
@@ -67,36 +99,35 @@ const SummaryScreen = ({ navigation, route }) => {
     }
 
     return (
-        <Provider>
-            <View style={styles.mainView}>
-                <Text style={styles.title}>{title}</Text>
-                <View style={styles.containerMain}>
-                    <ScrollView contentContainerStyle={styles.container}>
-                        <Markdown style={styles.data}>
-                            {summary}
-                        </Markdown>
-                    </ScrollView>
-                </View>
-                <Portal>
-                    <Modal visible={loading} dismissable={false} contentContainerStyle={styles.modal}>
-                        <ActivityIndicator animating={true} size="large" />
-                        <Text style={styles.loadingText}>Loading... </Text>
-                    </Modal>
-                </Portal>
+        <View style={styles.mainView}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.containerMain}>
+                <ScrollView contentContainerStyle={styles.container}>
+                    <Markdown style={styles.data}>
+                        {summary}
+                    </Markdown>
+                </ScrollView>
             </View>
-        </Provider>
+            <Portal>
+                <Modal visible={loading} dismissable={false} contentContainerStyle={styles.modal}>
+                    <ActivityIndicator animating={true} size="large" />
+                    <Text style={styles.loadingText}>Loading... </Text>
+                </Modal>
+            </Portal>
+        </View>
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = theme => StyleSheet.create({
     mainView: {
         flex: 1,
         paddingBottom: 8,
+        backgroundColor: theme.colors.background,
     },
     containerMain: {
         padding: 4,
         borderWidth: 2,
-        borderColor: 'black',
+        borderColor: theme.colors.primary,
         borderRadius: 10,
         margin: 6,
         marginTop: 0,
@@ -114,13 +145,21 @@ const styles = StyleSheet.create({
     data: {
         fontSize: 16,
         marginBottom: 8,
+
+        body: { color: theme.colors.onSurfaceVariant },
+        heading1: { color: theme.colors.onSurfaceVariant },
     },
     modal: {
-        backgroundColor: '#00000055',
+        backgroundColor: theme.colors.background,
         padding: 20,
+        margin: 20,
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
     },
 });
 
