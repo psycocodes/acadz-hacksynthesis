@@ -19,8 +19,8 @@ import SummaryScreen from './screens/products/Summary';
 import FlashcardsScreen from './screens/products/Flashcards';
 import YoutubeSuggestionsScreen from './screens/products/YtSuggestions';
 
-// import FlashcardSessionScreen from './screens/FlashcardSession';
-// import FlashcardSessionReportScreen from './screens/FlashcardSessionReport';
+import FlashcardSessionScreen from './screens/fsessions/Session';
+import FlashcardSessionResultScreen from './screens/fsessions/Result';
 
 const Stack = createStackNavigator();
 const DefaultTheme = MD3DarkTheme;
@@ -63,8 +63,8 @@ export default function App() {
                     <Stack.Screen name="Flashcards" component={FlashcardsScreen} />
                     <Stack.Screen name="YoutubeSuggestions" component={YoutubeSuggestionsScreen} />
 
-                    {/* <Stack.Screen name="FlashcardSession" component={FlashcardSessionScreen} />
-                    <Stack.Screen name="FlashcardSessionReport" component={FlashcardSessionReportScreen} /> */}
+                    <Stack.Screen name="FlashcardSession" component={FlashcardSessionScreen} />
+                    <Stack.Screen name="FlashcardSessionResult" component={FlashcardSessionResultScreen} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>

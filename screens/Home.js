@@ -65,7 +65,7 @@ const EmptyContent = ({ onAdd }) => {
 
 
 const FilledContent = ({ items, onItemPress, onAdd }) => {
-    console.log('filled content updated with items: ', items);
+    // console.log('filled content updated with items: ', items);
     const dialog = useRef(null);
     const theme = useTheme();
     const styles = createFilledContentStyles(theme);
@@ -164,7 +164,7 @@ const HomeScreen = ({ navigation }) => {
         }
     };
 
-    console.log('rendering at: ' + currentPath);
+    // console.log('rendering at: ' + currentPath);
 
     const addItem = async (name, type) => {
         // Validity checks

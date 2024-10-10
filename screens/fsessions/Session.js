@@ -1,76 +1,43 @@
 import {
-    SafeAreaView,
     StyleSheet,
-    Text,
     View,
-    Image,
     ScrollView,
     TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import { icons } from "../../constants";
-import { useEffect, useState } from 'react';
-import { FlashcardData } from './flashcards';
-import { IconButton } from "react-native-paper";
-import { useLocalSearchParams } from "expo-router";
-const name = 'ElectroStatics'
+import React, { useEffect, useState } from "react";
+import { IconButton, useTheme, Text } from "react-native-paper";
 
-const FlashcardApp = () => {
-    const fc = JSON.parse(useLocalSearchParams().flashcards);
-    const [flashcards, setFlashcards] = useState(fc);
+const FlashcardSessionScreen = ({ navigation, route }) => {
+    const theme = useTheme();
+    const styles = createStyles(theme);
+
+    const [flashcards, setFlashcards] = useState(JSON.parse(route.params.flashcards));
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [showAnswer, setShowAnswer] = useState(false);
-    const [difficultyLevels, setDifficultyLevels] = useState(
-        new Array(flashcards.length).fill('')
-    );
-
-    // State variables to track counts for each difficulty
+    const [difficultyLevels, setDifficultyLevels] = useState(new Array(flashcards.length).fill(''));
     const [easyCount, setEasyCount] = useState(0);
     const [mediumCount, setMediumCount] = useState(0);
     const [hardCount, setHardCount] = useState(0);
     const [unmarkedCount, setUnmarkedCount] = useState(flashcards.length);
     const [sessionEnded, setSessionEnded] = useState(false);
-    console.log('fc: '+ flashcards);
+
     const filteredFlashcards = flashcards.filter((_, index) => difficultyLevels[index] !== 'easy');
-    // console.log(flashcards.length);
-    // console.log(typeof flashcards);
-    // console.log(typeof flashcards[0]);
-    // console.log(flashcards[0]);
 
     useEffect(() => {
-        countUnmarkedQuestions(); // Recalculate unmarked questions whenever difficulty levels change
+        countUnmarkedQuestions();
     }, [difficultyLevels]);
 
-    const handleEndSession = () => {
-        setSessionEnded(true);
-    };
-
-    const handleShowAnswer = () => {
-        setShowAnswer((prev) => !prev);
-    };
+    const handleEndSession = () => setSessionEnded(true);
+    const handleShowAnswer = () => setShowAnswer(prev => !prev);
 
     const handleNextCard = () => {
         setShowAnswer(false);
-
-        // Start from the current index and look for the next valid card
         let nextIndex = currentCardIndex + 1;
 
-        console.log(currentCardIndex)
-        //console.log(nextIndex);
-
-        // Loop to find the next card that isn't marked as easy
         while (difficultyLevels[nextIndex % flashcards.length] === 'easy') {
             nextIndex++;
         }
-
-        // Ensure we wrap around to the beginning if we go past the end
-        if (nextIndex >= flashcards.length) {
-            while (difficultyLevels[nextIndex % flashcards.length] === 'easy') {
-                nextIndex++;
-            }
-        }
-        // Set the current card index to the next valid card index
         setCurrentCardIndex(nextIndex % flashcards.length);
     };
 
@@ -84,13 +51,10 @@ const FlashcardApp = () => {
         setCurrentCardIndex(0);
     };
 
-
-
     const countUnmarkedQuestions = () => {
         const count = difficultyLevels.filter(level => level === '').length;
         setUnmarkedCount(count);
     };
-
 
     const handleDifficulty = (level) => {
         const newDifficultyLevels = [...difficultyLevels];
@@ -98,27 +62,19 @@ const FlashcardApp = () => {
         newDifficultyLevels[currentCardIndex] = level;
         setDifficultyLevels(newDifficultyLevels);
 
-        console.log(`Selected difficulty for card ${currentCardIndex}: ${level}`);
+        if (previousLevel === 'easy') setEasyCount(prev => prev - 1);
+        if (previousLevel === 'medium') setMediumCount(prev => prev - 1);
+        if (previousLevel === 'hard') setHardCount(prev => prev - 1);
 
-        // Update counts based on the new difficulty and remove the previous one
-        if (previousLevel === 'easy') {
-            setEasyCount((prev) => prev - 1);
-        } else if (previousLevel === 'medium') {
-            setMediumCount((prev) => prev - 1);
-        } else if (previousLevel === 'hard') {
-            setHardCount((prev) => prev - 1);
-        }
-
-        // Update counts based on the selected difficulty
         switch (level) {
             case 'easy':
-                setEasyCount((prev) => prev + 1);
+                setEasyCount(prev => prev + 1);
                 break;
             case 'medium':
-                setMediumCount((prev) => prev + 1);
+                setMediumCount(prev => prev + 1);
                 break;
             case 'hard':
-                setHardCount((prev) => prev + 1);
+                setHardCount(prev => prev + 1);
                 break;
             default:
                 break;
@@ -126,202 +82,201 @@ const FlashcardApp = () => {
 
         countUnmarkedQuestions();
 
-        // Check if all questions are rated as easy
-        if (newDifficultyLevels.every((l) => l === 'easy')) {
-            console.log('Session ended. All cards rated as easy!');
+        if (newDifficultyLevels.every(l => l === 'easy')) {
             setSessionEnded(true);
         }
     };
 
     return (
-        <SafeAreaView className="h-full w-full bg-primary">
-            <View
-                id="navbar"
-                className="flex-row justify-between items-center mt-12 mx-8"
-            >
-                <Image
-                    className="h-[20px] w-[20px]"
-                    source={icons.leftArrow}
-                    resizeMode="contain"
-                />
-            </View>
+        <View style={styles.container}>
             {filteredFlashcards.length > 0 && !sessionEnded ? (
                 <>
-                    <Text className='text-gray-500 font-plight text-s text-center mt-2'>
+                    <Text style={styles.markedText}>
                         Currently Marked: {difficultyLevels[currentCardIndex] || 'Unmarked'}
                     </Text>
-                    {/* <Text style={styles.question}>
-            {flashcards[currentCardIndex].Question}
-          </Text> */}
+
                     <TouchableOpacity
                         onPress={handleShowAnswer}
-                        className="max-w-full h-1/2 bg-gradient-to-r from-red-500 to-orange-500 mx-8 mt-2 rounded-3xl">
-                        <LinearGradient
-                            colors={["#FDC830", "#F37335"]}
-                            className="w-full h-full rounded-3xl"
-                        >
-                            <ScrollView
-                                contentContainerStyle={{
-                                    flexDirection: "column",
-                                    minHeight: "100%",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    padding: 15,
-                                }}
-                            >
-                                <Text className="text-white font-psemibold text-lg text-center">
+                        style={styles.flashcard}
+                    >
+                        <LinearGradient colors={["#FDC830", "#F37335"]} style={styles.gradient}>
+                            <ScrollView contentContainerStyle={styles.flashcardContent}>
+                                <Text style={styles.flashcardText}>
                                     {!showAnswer ? flashcards[currentCardIndex].question : flashcards[currentCardIndex].answer}
                                 </Text>
                             </ScrollView>
                         </LinearGradient>
                     </TouchableOpacity>
-                    {/* {showAnswer && (
-            <Text style={styles.answer}>
-              {flashcards[currentCardIndex].Answer}
-            </Text>
-          )} */}
 
-                    {/* Difficulty Buttons */}
-                    <View className="flex-column mx-1">
-                        <View className="">
-                            <View style={styles.buttonContainer} className=' flex flex-row justify-center items-center mt-5 px-5'>
-                                <TouchableOpacity
-                                    onPress={() => handleDifficulty('easy')}
-                                    activeOpacity={0.7}
-                                    className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-green-400 px-3 py-2`}
-                                >
-                                    <Text className='text-green-100 font-psemibold text-xs'> Easy </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => handleDifficulty('medium')}
-                                    activeOpacity={0.7}
-                                    className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-yellow-400 px-3 py-2`}
-                                >
-                                    <Text className='text-yellow-100 font-psemibold text-xs'> Mid </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => handleDifficulty('hard')}
-                                    activeOpacity={0.7}
-                                    className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-red-400 px-3 py-2`}
-                                >
-                                    <Text className='text-red-100 font-psemibold text-xs'> Hard </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={handleNextCard}
-                                    activeOpacity={0.7}
-                                    className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-gray-400 px-3 py-2`}
-                                >
-                                    <Text className='text-gray-100 font-psemibold text-xs'> Next </Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View className="mx-5">
-                                <TouchableOpacity
-                                    onPress={handleEndSession}
-                                    activeOpacity={0.7}
-                                    className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-gray-400 `}
-                                >
-                                    <IconButton
-                                        icon='stop'
-                                        iconColor='#FF3B30'
-                                        size={30}
-                                    />
-                                    <Text className='text-gray-100 font-psemibold text-xs'> End Session </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-
-                    {/* Difficulty Counters */}
-                    {/* <View style={styles.counterContainer}>
-            <Text>Easy: {easyCount}</Text>
-            <Text>Medium: {mediumCount}</Text>
-            <Text>Hard: {hardCount}</Text>
-            <Text>Unmarked: {unmarkedCount}</Text>
-          </View> */}
-
-
-                </>
-            ) : (
-                <View className='flex flex-col mt-20'>
-                    <Text className='text-gray-100 font-pbold text-2xl text-center'>Session Ended</Text>
-                    <Text className='text-gray-400 font-pbold text-l text-center'>{name}</Text>
-                    <Text className='text-gray-200 font-pmedium text-l text-center'>Your Performance:</Text>
-                    <Text className='text-green-500 font-plight text-s text-center'>Easy: {easyCount}</Text>
-                    <Text className='text-yellow-500 font-plight text-s text-center'>Medium: {mediumCount}</Text>
-                    <Text className='text-red-500 font-plight text-s text-center'>Hard: {hardCount}</Text>
-                    <Text className='text-gray-500 font-plight text-s text-center'>Unmarked: {unmarkedCount}</Text>
-                    <View className="">
-                        <TouchableOpacity
-                            onPress={() => {
-                                setSessionEnded(false);
-                                setCurrentCardIndex(0); // Reset the index when resuming
-                            }}
-                            activeOpacity={0.7}
-                            className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-gray-400 px-3 py-2 mx-10 mt-7`}
-                        >
-                            <IconButton
-                                icon='play-circle-outline'
-                                iconColor='#4CAF50'
-                                size={30}
-                            />
-                            <Text className='text-gray-100 font-psemibold text-xs'>Resume Session</Text>
+                    <View style={styles.difficultyButtonsContainer}>
+                        <TouchableOpacity onPress={() => handleDifficulty('easy')} style={[styles.difficultyButton, styles.easy]}>
+                            <Text style={styles.difficultyText}>Easy</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleDifficulty('medium')} style={[styles.difficultyButton, styles.medium]}>
+                            <Text style={styles.difficultyText}>Mid</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleDifficulty('hard')} style={[styles.difficultyButton, styles.hard]}>
+                            <Text style={styles.difficultyText}>Hard</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleNextCard} style={styles.nextButton}>
+                            <Text style={styles.difficultyText}>Next</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                        onPress={handleResetSession}
-                        activeOpacity={0.7}
-                        className={`rounded-xl min-h-[62px] min-w-[72px] flex flex-row justify-center items-center border border-gray-400 px-3 py-2 mx-10 mt-3`}
-                    >
-                        <IconButton
-                            icon='rewind-outline'
-                            iconColor='#FF3B30'
-                            size={30}
-                        />
-                        <Text className='text-gray-100 font-psemibold text-xs'>Reset Session</Text>
+
+                    <TouchableOpacity onPress={handleEndSession} style={styles.endSessionButton}>
+                        <IconButton icon="stop" iconColor="#FF3B30" size={30} />
+                        <Text style={styles.difficultyText}>End Session</Text>
                     </TouchableOpacity>
-                    {/* <Text>Session Ended</Text>
-          <Text>Easy: {easyCount}</Text>
-          <Text>Medium: {mediumCount}</Text>
-          <Text>Hard: {hardCount}</Text>
-          <Text>Unmarked: {unmarkedCount}</Text>
-          <Button title="Resume Session" onPress={() => {
-            setSessionEnded(false);
-            setCurrentCardIndex(0); // Reset the index when resuming
-          }} />
-          <Button title="Reset Session" onPress={handleResetSession} /> */}
+                </>
+            ) : (
+                <View style={styles.sessionEndedContainer}>
+                    <Text style={styles.sessionEndedText}>Session Ended</Text>
+                    <Text style={styles.performanceText}>Your Performance:</Text>
+                    <Text style={styles.performanceEasy}>Easy: {easyCount}</Text>
+                    <Text style={styles.performanceMedium}>Medium: {mediumCount}</Text>
+                    <Text style={styles.performanceHard}>Hard: {hardCount}</Text>
+                    <Text style={styles.performanceUnmarked}>Unmarked: {unmarkedCount}</Text>
+
+                    <TouchableOpacity
+                        onPress={() => {
+                            setSessionEnded(false);
+                            setCurrentCardIndex(0);
+                        }}
+                        style={styles.resumeButton}
+                    >
+                        <IconButton icon="play-circle-outline" iconColor="#4CAF50" size={30} />
+                        <Text style={styles.difficultyText}>Resume Session</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={handleResetSession} style={styles.resetButton}>
+                        <IconButton icon="rewind-outline" iconColor="#FF3B30" size={30} />
+                        <Text style={styles.difficultyText}>Reset Session</Text>
+                    </TouchableOpacity>
                 </View>
-                /******  ec4bc1ce-4cd8-4a29-b62b-13fee61351a1  *******/
             )}
-        </SafeAreaView>
+        </View>
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = theme => StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: theme.colors.background,
+    },
+    navbar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 12,
+        marginHorizontal: 8,
+    },
+    icon: {
+        height: 20,
+        width: 20,
+    },
+    markedText: {
+        textAlign: 'center',
+        marginTop: 2,
+        fontSize: 12,
+        color: 'gray',
+    },
+    flashcard: {
+        maxWidth: '100%',
+        height: '50%',
+        marginHorizontal: 8,
+        marginTop: 2,
+        borderRadius: 20,
+    },
+    gradient: {
+        flex: 1,
+        borderRadius: 20,
+    },
+    flashcardContent: {
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
+        padding: 15,
     },
-    question: {
+    flashcardText: {
+        fontSize: 18,
+        color: 'white',
+        textAlign: 'center',
+    },
+    difficultyButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 20,
+    },
+    difficultyButton: {
+        minHeight: 62,
+        minWidth: 72,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        padding: 10,
+        marginHorizontal: 5,
+    },
+    easy: {
+        borderColor: 'green',
+        borderWidth: 1,
+    },
+    medium: {
+        borderColor: 'yellow',
+        borderWidth: 1,
+    },
+    hard: {
+        borderColor: 'red',
+        borderWidth: 1,
+    },
+    nextButton: {
+        borderColor: 'gray',
+        borderWidth: 1,
+    },
+    endSessionButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+        borderColor: 'gray',
+        borderWidth: 1,
+    },
+    sessionEndedContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    sessionEndedText: {
         fontSize: 24,
-        marginBottom: 20,
+        color: 'gray',
+        fontWeight: 'bold',
     },
-    answer: {
-        fontSize: 20,
-        marginBottom: 20,
+    performanceText: {
+        fontSize: 18,
+        color: 'gray',
+        marginVertical: 10,
+    },
+    performanceEasy: {
         color: 'green',
     },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginBottom: 20,
+    performanceMedium: {
+        color: 'yellow',
     },
-    counterContainer: {
-        marginTop: 20,
+    performanceHard: {
+        color: 'red',
+    },
+    performanceUnmarked: {
+        color: 'gray',
+    },
+    resumeButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    resetButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
     },
 });
 
-export default FlashcardApp;
-
+export default FlashcardSessionScreen;
