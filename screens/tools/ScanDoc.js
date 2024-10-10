@@ -98,14 +98,13 @@ const ScanDocumentScreen = ({ navigation }) => {
         setLoading(0.0);
         let fullDat = '';
         for (let i = 0; i < images.length; i++) {
-            const img = images[i];
-            const dat = await performOCR(img.uri);
+            const dat = await performOCR(images[i]);
             fullDat += dat + "\n\n";
             setLoading((i + 1) / images.length);
         }
         await wait(500);
         setLoading(NOT_LOADING);
-        console.log('full data: ' + fullDat);
+        // console.log('full data: ' + fullDat);
         // router.push({ pathname: '../transcript', params: { transcript: fullDat } });
         navigation.navigate('Transcript', { transcript: fullDat });
     }
@@ -131,7 +130,6 @@ const ScanDocumentScreen = ({ navigation }) => {
                     },
                 }
             );
-
             const result = response.data.ParsedResults[0].ParsedText;
             if (result === '') console.log('no text found');
             else console.log('text found!');
