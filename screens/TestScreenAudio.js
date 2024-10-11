@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Text, useTheme } from "react-native-paper";
+import { Button, ProgressBar, Text, useTheme } from "react-native-paper";
 import {
     ExpoSpeechRecognitionModule,
     useSpeechRecognitionEvent,
@@ -16,6 +16,7 @@ export default function TestScreenAudio() {
     const [recognizing, setRecognizing] = useState(false);
     const [transcript, setTranscript] = useState("");
     const [preTranscript, setPreTranscript] = useState("...");
+    const [volume, setVolume] = useState(0);
 
     useEffect(() => {
         const listener = addSpeechRecognitionListener("result", (event) => {
@@ -39,6 +40,10 @@ export default function TestScreenAudio() {
     // useSpeechRecognitionEvent("audioend", (event) => {
     //     console.log('audio end ' + event.uri)
     // });
+    useSpeechRecognitionEvent("volumechange", (event) => {
+        // console.log("Volume changed to:", event.value);
+        setVolume((event.value + 2) / 12);
+    });
 
     useSpeechRecognitionEvent("error", (event) => {
         console.log("error code:", event.error, "error messsage:", event.message);
@@ -68,6 +73,10 @@ export default function TestScreenAudio() {
             //     outputFileName: "recording.wav",
             // },
             contextualStrings: ["AcadZ"],
+            volumeChangeEventOptions: {
+                enabled: true,
+                intervalMillis: 300,
+            },
         });
     };
 
@@ -77,6 +86,7 @@ export default function TestScreenAudio() {
                 <Text>{transcript + preTranscript}</Text>
             </ScrollView>
             <View style={styles.bottomSection}>
+                <ProgressBar progress={volume} style={styles.progress} />
                 {!recognizing ? (
                     <Button mode="contained" onPress={handleStart}> Start </Button>
                 ) : (
@@ -104,7 +114,10 @@ const createStyles = theme => StyleSheet.create({
     bottomSection: {
         // borderWidth: 1,
         // borderColor: 'red',
-        paddingTop: 15,
+        // paddingTop: 15,
         paddingBottom: 35,
+    },
+    progress: {
+        marginBottom: 15,
     }
 });
