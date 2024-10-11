@@ -4,21 +4,42 @@ import { Button, Text, useTheme } from "react-native-paper";
 import {
     ExpoSpeechRecognitionModule,
     useSpeechRecognitionEvent,
+    addSpeechRecognitionListener,
 } from "expo-speech-recognition";
 
+// need to make changes for Android 12 and below (make it continuous)
 
 export default function TestScreenAudio() {
     const theme = useTheme();
     const styles = createStyles(theme);
 
     const [recognizing, setRecognizing] = useState(false);
-    const [transcript, setTranscript] = useState("sdfdfzxcvdfgdf");
+    const [transcript, setTranscript] = useState("");
+    const [preTranscript, setPreTranscript] = useState("...");
+
+    useEffect(() => {
+        const listener = addSpeechRecognitionListener("result", (event) => {
+            if (event.isFinal) {
+                setTranscript(transcript + event.results[0]?.transcript);
+                setPreTranscript("");
+            }
+            else {
+                setPreTranscript(event.results[0]?.transcript);
+            }
+        });
+        return listener.remove;
+    }, [transcript]);
 
     useSpeechRecognitionEvent("start", () => setRecognizing(true));
     useSpeechRecognitionEvent("end", () => setRecognizing(false));
-    useSpeechRecognitionEvent("result", (event) => {
-        setTranscript(event.results[0]?.transcript);
-    });
+
+    // useSpeechRecognitionEvent("audiostart", (event) => {
+    //     console.log('audio start ' + event.uri)
+    // });
+    // useSpeechRecognitionEvent("audioend", (event) => {
+    //     console.log('audio end ' + event.uri)
+    // });
+
     useSpeechRecognitionEvent("error", (event) => {
         console.log("error code:", event.error, "error messsage:", event.message);
     });
@@ -31,27 +52,38 @@ export default function TestScreenAudio() {
         }
         // Start speech recognition
         ExpoSpeechRecognitionModule.start({
-            lang: "en-US",
+            lang: "en-IN",
             interimResults: true,
             maxAlternatives: 1,
-            continuous: false,
-            requiresOnDeviceRecognition: false,
-            addsPunctuation: false,
-            contextualStrings: ["Carlsen", "Nepomniachtchi", "Praggnanandhaa"],
+            continuous: true,
+            requiresOnDeviceRecognition: true,
+            addsPunctuation: true,
+            androidIntentOptions: {
+                EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS: 10000,
+                EXTRA_MASK_OFFENSIVE_WORDS: false,
+            },
+            // recordingOptions: {
+            //     persist: true,
+            //     outputDirectory: undefined,
+            //     outputFileName: "recording.wav",
+            // },
+            contextualStrings: ["AcadZ"],
         });
     };
 
     return (
         <View style={styles.container}>
-            {!recognizing ? (
-                <Button mode="contained" onPress={handleStart}> Start </Button>
-            ) : (
-                <Button mode="contained" onPress={ExpoSpeechRecognitionModule.stop}> Stop </Button>
-            )}
-
-            <ScrollView>
-                <Text>{transcript}</Text>
+            <ScrollView style={styles.transcriptContainer}>
+                <Text>{transcript + preTranscript}</Text>
             </ScrollView>
+            <View style={styles.bottomSection}>
+                {!recognizing ? (
+                    <Button mode="contained" onPress={handleStart}> Start </Button>
+                ) : (
+                    <Button mode="contained" onPress={ExpoSpeechRecognitionModule.stop}> Stop </Button>
+                )}
+            </View>
+
         </View>
     );
 }
@@ -60,6 +92,19 @@ const createStyles = theme => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: theme.colors.background,
+        padding: 8,
+    },
+    transcriptContainer: {
+        borderWidth: 2,
+        borderColor: theme.colors.primary,
+        borderRadius: 10,
+        padding: 8,
+        marginBottom: 8,
+    },
+    bottomSection: {
+        // borderWidth: 1,
+        // borderColor: 'red',
+        paddingTop: 15,
+        paddingBottom: 35,
     }
-
 });
