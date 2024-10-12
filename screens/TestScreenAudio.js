@@ -7,20 +7,8 @@ import {
     addSpeechRecognitionListener,
 } from "expo-speech-recognition";
 
-import Svg, { Rect } from 'react-native-svg';
-import Animated, { useAnimatedProps } from 'react-native-reanimated';
+import VolumeMeter from "../components/VolumeMeter";
 
-const BAR_COUNT = 50;  // Number of bars for the meter
-const BAR_WIDTH = 300 / BAR_COUNT * 0.5;
-
-// Helper function to generate random volume changes (you'll replace this with actual data)
-const getVolumeLevels = (maxLevel) => {
-    const levels = [];
-    for (let i = 0; i < BAR_COUNT; i++) {
-        levels.push(Math.random() * maxLevel);
-    }
-    return levels;
-};
 
 // need to make changes for Android 12 and below (make it continuous)
 export default function TestScreenAudio() {
@@ -30,9 +18,9 @@ export default function TestScreenAudio() {
     const [recognizing, setRecognizing] = useState(false);
     const [transcript, setTranscript] = useState("");
     const [preTranscript, setPreTranscript] = useState("...");
-    // const [volume, setVolume] = useState(0);
 
-    const [bars, setBars] = useState(getVolumeLevels(1)); // Initialize bars with zero height new Array(BAR_COUNT).fill(0)
+    const BAR_COUNT = 50;  // Number of bars for the meter
+    const [volumeArray, setVolumeArray] = useState(new Array(BAR_COUNT).fill(0)); // Initialize bars with zero height 
 
     useEffect(() => {
         const listener = addSpeechRecognitionListener("result", (event) => {
@@ -60,9 +48,9 @@ export default function TestScreenAudio() {
         // console.log("Volume changed to:", event.value);
         const vol = (event.value + 2) / 12;
         // setVolume(vol);
-        bars.shift();
-        bars.push(vol);
-        setBars([...bars]);
+        volumeArray.shift();
+        volumeArray.push(vol);
+        setVolumeArray([...volumeArray]);
     });
 
     useSpeechRecognitionEvent("error", (event) => {
@@ -107,25 +95,7 @@ export default function TestScreenAudio() {
             </ScrollView>
             <View style={styles.bottomSection}>
 
-                <Svg height="100" width="100%" viewBox="0 0 300 100" style={styles.svg}>
-                    {bars.map((value, index) => {
-                        // Animate the height of each bar
-                        const animatedProps = useAnimatedProps(() => ({
-                            height: value * 80,
-                            y: (100 - value * 80) / 2,  // Adjust Y to grow from bottom to top
-                        }));
-
-                        return (
-                            <AnimatedRect
-                                key={index}
-                                x={index * 300 / BAR_COUNT}
-                                width={BAR_WIDTH}
-                                animatedProps={animatedProps}
-                                fill="white"
-                            />
-                        );
-                    })}
-                </Svg>
+                <VolumeMeter volumeArray={volumeArray} />
 
                 {!recognizing ? (
                     <Button mode="contained" onPress={handleStart}> Start </Button>
@@ -137,9 +107,6 @@ export default function TestScreenAudio() {
         </View>
     );
 }
-
-// Animated rectangle for each volume bar
-const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 const createStyles = theme => StyleSheet.create({
     container: {
@@ -162,8 +129,5 @@ const createStyles = theme => StyleSheet.create({
     },
     progress: {
         marginBottom: 15,
-    },
-    svg: {
-        // backgroundColor: '#0000ff'
     }
 });
