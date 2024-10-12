@@ -16,13 +16,15 @@ export default function TestScreenAudio() {
     const styles = createStyles(theme);
 
     const [recognizing, setRecognizing] = useState(false);
+    const [shouldRecognize, setShouldRecognize] = useState(false);
     const [transcript, setTranscript] = useState("");
     const [preTranscript, setPreTranscript] = useState("...");
 
     const [volumeArray, setVolumeArray] = useState(getInitialVolumeArray()); // Initialize bars with zero height 
 
     useEffect(() => {
-        const listener = addSpeechRecognitionListener("result", (event) => {
+        const resultListener = addSpeechRecognitionListener("result", (event) => {
+            // console.log(event.isFinal, event.results[0]);
             if (event.isFinal) {
                 setTranscript(transcript + event.results[0]?.transcript);
                 setPreTranscript("");
@@ -31,8 +33,18 @@ export default function TestScreenAudio() {
                 setPreTranscript(event.results[0]?.transcript);
             }
         });
-        return listener.remove;
-    }, [transcript]);
+
+        const errorListener = addSpeechRecognitionListener("error", (event) => {
+            setTranscript(transcript + preTranscript);
+            setPreTranscript("");
+            console.log("error code:", event.error, "error messsage:", event.message);
+        });
+
+        return () => {
+            resultListener.remove();
+            errorListener.remove();
+        }
+    }, [transcript, preTranscript]);
 
     useSpeechRecognitionEvent("start", () => setRecognizing(true));
     useSpeechRecognitionEvent("end", () => setRecognizing(false));
@@ -70,16 +82,16 @@ export default function TestScreenAudio() {
         addVolumes(nv1, nv2);
     });
 
-    useSpeechRecognitionEvent("error", (event) => {
-        console.log("error code:", event.error, "error messsage:", event.message);
-    });
 
     const handleStart = async () => {
         const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
         if (!result.granted) {
             console.warn("Permissions not granted", result);
+            Alert.alert("Permissions not granted", result.toString());
             return;
         }
+        setShouldRecognize(true);
+
         // Start speech recognition
         ExpoSpeechRecognitionModule.start({
             lang: "en-IN",
@@ -104,6 +116,13 @@ export default function TestScreenAudio() {
             },
         });
     };
+    const handlePause = async () => {
+        setShouldRecognize(false);
+        ExpoSpeechRecognitionModule.stop();
+    }
+    const handleDone = async () => {
+        // some logic
+    }
 
     return (
         <View style={styles.container}>
@@ -114,11 +133,34 @@ export default function TestScreenAudio() {
 
                 <VolumeMeter volumeArray={volumeArray} style={styles.volumeMeter} />
 
-                {!recognizing ? (
-                    <Button mode="contained" onPress={handleStart}> Start </Button>
-                ) : (
-                    <Button mode="contained" onPress={ExpoSpeechRecognitionModule.stop}> Stop </Button>
-                )}
+                <View style={styles.bottomButtonsContainer}>
+                    {!recognizing ? (
+                        <Button
+                            mode="contained"
+                            icon="play"
+                            style={styles.bottomButtons}
+                            onPress={handleStart}
+                            disabled={shouldRecognize}>
+                            {transcript === '' ? 'Start' : 'Resume'}
+                        </Button>
+                    ) : (
+                        <Button
+                            mode="contained"
+                            icon="pause"
+                            style={styles.bottomButtons}
+                            onPress={handlePause}
+                            disabled={!shouldRecognize}>
+                            Pause
+                        </Button>
+                    )}
+                    <Button
+                        mode="contained"
+                        icon="check"
+                        style={styles.bottomButtons}
+                        disabled={recognizing || shouldRecognize || transcript === ''}>
+                        Done
+                    </Button>
+                </View>
             </View>
 
         </View>
@@ -143,5 +185,13 @@ const createStyles = theme => StyleSheet.create({
     },
     volumeMeter: {
         marginBottom: 8,
+    },
+    bottomButtonsContainer: {
+        flexDirection: 'row',
+        gap: 8,
+        paddingHorizontal: 8,
+    },
+    bottomButtons: {
+        flex: 1,
     }
 });
