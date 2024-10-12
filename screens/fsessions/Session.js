@@ -3,6 +3,7 @@ import {
     View,
     ScrollView,
     TouchableOpacity,
+    Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
@@ -27,6 +28,11 @@ const FlashcardSessionScreen = ({ navigation, route }) => {
     useEffect(() => {
         countUnmarkedQuestions();
     }, [difficultyLevels]);
+
+    // Alert for not finished
+    useEffect(() => {
+        Alert.alert('Not Ready', 'Sorry for the inconvenience! This page is under development.')
+    }, []);
 
     const handleEndSession = () => setSessionEnded(true);
     const handleShowAnswer = () => setShowAnswer(prev => !prev);
