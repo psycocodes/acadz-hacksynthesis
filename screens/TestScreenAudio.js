@@ -1,14 +1,28 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { Button, ProgressBar, Text, useTheme } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import { Button, Text, useTheme } from "react-native-paper";
 import {
     ExpoSpeechRecognitionModule,
     useSpeechRecognitionEvent,
     addSpeechRecognitionListener,
 } from "expo-speech-recognition";
 
-// need to make changes for Android 12 and below (make it continuous)
+import Svg, { Rect } from 'react-native-svg';
+import Animated, { useAnimatedProps } from 'react-native-reanimated';
 
+const BAR_COUNT = 50;  // Number of bars for the meter
+const BAR_WIDTH = 300 / BAR_COUNT * 0.5;
+
+// Helper function to generate random volume changes (you'll replace this with actual data)
+const getVolumeLevels = (maxLevel) => {
+    const levels = [];
+    for (let i = 0; i < BAR_COUNT; i++) {
+        levels.push(Math.random() * maxLevel);
+    }
+    return levels;
+};
+
+// need to make changes for Android 12 and below (make it continuous)
 export default function TestScreenAudio() {
     const theme = useTheme();
     const styles = createStyles(theme);
@@ -16,7 +30,9 @@ export default function TestScreenAudio() {
     const [recognizing, setRecognizing] = useState(false);
     const [transcript, setTranscript] = useState("");
     const [preTranscript, setPreTranscript] = useState("...");
-    const [volume, setVolume] = useState(0);
+    // const [volume, setVolume] = useState(0);
+
+    const [bars, setBars] = useState(getVolumeLevels(1)); // Initialize bars with zero height new Array(BAR_COUNT).fill(0)
 
     useEffect(() => {
         const listener = addSpeechRecognitionListener("result", (event) => {
@@ -42,7 +58,11 @@ export default function TestScreenAudio() {
     // });
     useSpeechRecognitionEvent("volumechange", (event) => {
         // console.log("Volume changed to:", event.value);
-        setVolume((event.value + 2) / 12);
+        const vol = (event.value + 2) / 12;
+        // setVolume(vol);
+        bars.shift();
+        bars.push(vol);
+        setBars([...bars]);
     });
 
     useSpeechRecognitionEvent("error", (event) => {
@@ -86,7 +106,27 @@ export default function TestScreenAudio() {
                 <Text>{transcript + preTranscript}</Text>
             </ScrollView>
             <View style={styles.bottomSection}>
-                <ProgressBar progress={volume} style={styles.progress} />
+
+                <Svg height="100" width="100%" viewBox="0 0 300 100" style={styles.svg}>
+                    {bars.map((value, index) => {
+                        // Animate the height of each bar
+                        const animatedProps = useAnimatedProps(() => ({
+                            height: value * 80,
+                            y: (100 - value * 80) / 2,  // Adjust Y to grow from bottom to top
+                        }));
+
+                        return (
+                            <AnimatedRect
+                                key={index}
+                                x={index * 300 / BAR_COUNT}
+                                width={BAR_WIDTH}
+                                animatedProps={animatedProps}
+                                fill="white"
+                            />
+                        );
+                    })}
+                </Svg>
+
                 {!recognizing ? (
                     <Button mode="contained" onPress={handleStart}> Start </Button>
                 ) : (
@@ -97,6 +137,9 @@ export default function TestScreenAudio() {
         </View>
     );
 }
+
+// Animated rectangle for each volume bar
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 const createStyles = theme => StyleSheet.create({
     container: {
@@ -119,5 +162,8 @@ const createStyles = theme => StyleSheet.create({
     },
     progress: {
         marginBottom: 15,
+    },
+    svg: {
+        // backgroundColor: '#0000ff'
     }
 });
