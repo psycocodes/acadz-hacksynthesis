@@ -8,112 +8,112 @@ const FlashcardsScreen = ({ navigation, route }) => {
     const theme = useTheme();
     const styles = createStyles(theme);
 
-    const [loading, setLoading] = useState(false);//true
-    // const [flashcards, setFlashcards] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [flashcards, setFlashcards] = useState([]);
 
     // if (flashcards) console.log(JSON.stringify(flashcards));
-    flashcards = [
-        {
-            "question": "What is MkBHD's real name?",
-            "answer": "Mark S. Brownlee",
-            "id": 0
-        },
-        {
-            "question": "What is the name of MkBHD's app that has received negative reviews?",
-            "answer": "Wallpaper app",
-            "id": 1
-        },
-        {
-            "question": "What is the main criticism against MkBHD's app?",
-            "answer": "Price",
-            "id": 2
-        },
-        {
-            "question": "What is the pricing model of MkBHD's app?",
-            "answer": "Freemium",
-            "id": 3
-        },
-        {
-            "question": "What is the main inconvenience with the free version of MkBHD's app?",
-            "answer": "Ads",
-            "id": 4
-        },
-        {
-            "question": "What is the main difference between the free and paid versions of MkBHD's app?",
-            "answer": "High definition wallpapers",
-            "id": 5
-        },
-        {
-            "question": "How do some people compare MkBHD's app to NFTs?",
-            "answer": "Free wallpapers can be easily downloaded",
-            "id": 6
-        },
-        {
-            "question": "How is MkBHD handling the negative feedback?",
-            "answer": "Professional, open to change",
-            "id": 7
-        },
-        {
-            "question": "What is MkBHD's current plan to address the negative feedback?",
-            "answer": "Reduce ads",
-            "id": 8
-        },
-        {
-            "question": "How does MkBHD's reaction to criticism differ from KSI and Logan Paul's?",
-            "answer": "More professional, accepting responsibility",
-            "id": 9
-        },
-        {
-            "question": "What is the 'Golden Rule' of the Internet according to MkBHD's past post?",
-            "answer": "Don't charge for something that was already free",
-            "id": 10
-        },
-        {
-            "question": "What is the main argument against MkBHD charging for wallpapers?",
-            "answer": "They are easily available for free",
-            "id": 11
-        },
-        {
-            "question": "What is the potential impact of the criticism on MkBHD's reputation?",
-            "answer": "Negative impact",
-            "id": 12
-        },
-        {
-            "question": "What is the main concern that people have regarding subscriptions?",
-            "answer": "Cost",
-            "id": 13
-        },
-        {
-            "question": "What is the overall sentiment towards MkBHD's app?",
-            "answer": "Negative",
-            "id": 14
-        },
-        {
-            "question": "Why is the situation with MkBHD's app interesting to observe?",
-            "answer": "Influence of a popular tech reviewer",
-            "id": 15
-        },
-        {
-            "question": "What is the main reason behind the backlash against MkBHD's app?",
-            "answer": "Subscription fatigue",
-            "id": 16
-        },
-        {
-            "question": "What is the likely future of MkBHD's app?",
-            "answer": "Uncertain",
-            "id": 17
-        },
-        {
-            "question": "What is the main theme of the text?",
-            "answer": "Criticism of MkBHD's paid wallpaper app",
-            "id": 18
-        },
-        {
-            "question": "What is the author's tone towards MkBHD's situation?",
-            "answer": "Critical but somewhat understanding",
-            "id": 19
-        }
-    ];
+    // flashcards = [
+    //     {
+    //         "question": "What is MkBHD's real name?",
+    //         "answer": "Mark S. Brownlee",
+    //         "id": 0
+    //     },
+    //     {
+    //         "question": "What is the name of MkBHD's app that has received negative reviews?",
+    //         "answer": "Wallpaper app",
+    //         "id": 1
+    //     },
+    //     {
+    //         "question": "What is the main criticism against MkBHD's app?",
+    //         "answer": "Price",
+    //         "id": 2
+    //     },
+    //     {
+    //         "question": "What is the pricing model of MkBHD's app?",
+    //         "answer": "Freemium",
+    //         "id": 3
+    //     },
+    //     {
+    //         "question": "What is the main inconvenience with the free version of MkBHD's app?",
+    //         "answer": "Ads",
+    //         "id": 4
+    //     },
+    //     {
+    //         "question": "What is the main difference between the free and paid versions of MkBHD's app?",
+    //         "answer": "High definition wallpapers",
+    //         "id": 5
+    //     },
+    //     {
+    //         "question": "How do some people compare MkBHD's app to NFTs?",
+    //         "answer": "Free wallpapers can be easily downloaded",
+    //         "id": 6
+    //     },
+    //     {
+    //         "question": "How is MkBHD handling the negative feedback?",
+    //         "answer": "Professional, open to change",
+    //         "id": 7
+    //     },
+    //     {
+    //         "question": "What is MkBHD's current plan to address the negative feedback?",
+    //         "answer": "Reduce ads",
+    //         "id": 8
+    //     },
+    //     {
+    //         "question": "How does MkBHD's reaction to criticism differ from KSI and Logan Paul's?",
+    //         "answer": "More professional, accepting responsibility",
+    //         "id": 9
+    //     },
+    //     {
+    //         "question": "What is the 'Golden Rule' of the Internet according to MkBHD's past post?",
+    //         "answer": "Don't charge for something that was already free",
+    //         "id": 10
+    //     },
+    //     {
+    //         "question": "What is the main argument against MkBHD charging for wallpapers?",
+    //         "answer": "They are easily available for free",
+    //         "id": 11
+    //     },
+    //     {
+    //         "question": "What is the potential impact of the criticism on MkBHD's reputation?",
+    //         "answer": "Negative impact",
+    //         "id": 12
+    //     },
+    //     {
+    //         "question": "What is the main concern that people have regarding subscriptions?",
+    //         "answer": "Cost",
+    //         "id": 13
+    //     },
+    //     {
+    //         "question": "What is the overall sentiment towards MkBHD's app?",
+    //         "answer": "Negative",
+    //         "id": 14
+    //     },
+    //     {
+    //         "question": "Why is the situation with MkBHD's app interesting to observe?",
+    //         "answer": "Influence of a popular tech reviewer",
+    //         "id": 15
+    //     },
+    //     {
+    //         "question": "What is the main reason behind the backlash against MkBHD's app?",
+    //         "answer": "Subscription fatigue",
+    //         "id": 16
+    //     },
+    //     {
+    //         "question": "What is the likely future of MkBHD's app?",
+    //         "answer": "Uncertain",
+    //         "id": 17
+    //     },
+    //     {
+    //         "question": "What is the main theme of the text?",
+    //         "answer": "Criticism of MkBHD's paid wallpaper app",
+    //         "id": 18
+    //     },
+    //     {
+    //         "question": "What is the author's tone towards MkBHD's situation?",
+    //         "answer": "Critical but somewhat understanding",
+    //         "id": 19
+    //     }
+    // ];
 
     const onAppear = async () => {
         const prompt = createPrompt(trasncript);
@@ -127,9 +127,9 @@ const FlashcardsScreen = ({ navigation, route }) => {
         setLoading(false);
     };
 
-    // useEffect(() => {
-    //     onAppear();
-    // }, []);
+    useEffect(() => {
+        onAppear();
+    }, []);
 
     const parseResult = (res) => {
         res = res.replace('```json', '').replace('```', '').trim();

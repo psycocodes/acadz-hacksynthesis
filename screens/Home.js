@@ -1,9 +1,9 @@
 import { Alert, BackHandler, FlatList, StyleSheet, Text, View, Image } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Icons, Images } from "../constants/";
+import { Images } from "../constants/";
 import { TouchableOpacity } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FAB, IconButton, useTheme, Icon } from "react-native-paper";
+import { FAB, IconButton, useTheme } from "react-native-paper";
 import AddNewDialog from "../components/AddNewDialog";
 
 
@@ -134,7 +134,7 @@ const HomeScreen = ({ navigation }) => {
                 iconColor={theme.colors.onPrimaryContainer}
             />),
             headerRight: () => (<IconButton
-                icon="dots-vertical"
+                icon="delete-forever"
                 onPress={clearStorage}
                 iconColor={theme.colors.onPrimaryContainer}
             />)
