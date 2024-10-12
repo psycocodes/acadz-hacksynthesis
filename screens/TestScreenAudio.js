@@ -7,7 +7,7 @@ import {
     addSpeechRecognitionListener,
 } from "expo-speech-recognition";
 
-import VolumeMeter from "../components/VolumeMeter";
+import VolumeMeter, { getInitialVolumeArray } from "../components/VolumeMeter";
 
 
 // need to make changes for Android 12 and below (make it continuous)
@@ -19,8 +19,7 @@ export default function TestScreenAudio() {
     const [transcript, setTranscript] = useState("");
     const [preTranscript, setPreTranscript] = useState("...");
 
-    const BAR_COUNT = 50;  // Number of bars for the meter
-    const [volumeArray, setVolumeArray] = useState(new Array(BAR_COUNT).fill(0)); // Initialize bars with zero height 
+    const [volumeArray, setVolumeArray] = useState(getInitialVolumeArray()); // Initialize bars with zero height 
 
     useEffect(() => {
         const listener = addSpeechRecognitionListener("result", (event) => {
@@ -44,13 +43,31 @@ export default function TestScreenAudio() {
     // useSpeechRecognitionEvent("audioend", (event) => {
     //     console.log('audio end ' + event.uri)
     // });
-    useSpeechRecognitionEvent("volumechange", (event) => {
-        // console.log("Volume changed to:", event.value);
-        const vol = (event.value + 2) / 12;
-        // setVolume(vol);
+
+    function timeout(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    const addVolumes = async (nv1, nv2) => {
+        await timeout(300);
         volumeArray.shift();
-        volumeArray.push(vol);
+        volumeArray.push(nv1);
         setVolumeArray([...volumeArray]);
+        await timeout(300);
+        volumeArray.shift();
+        volumeArray.push(nv2);
+        setVolumeArray([...volumeArray]);
+    }
+
+    useSpeechRecognitionEvent("volumechange", (event) => {
+        const lastVol = volumeArray[volumeArray.length - 1];
+        const currVol = (event.value + 2) / 12;
+        const nv1 = (lastVol + currVol) / 2;
+        const nv2 = (nv1 + currVol) / 2;
+        // volumeArray.shift();
+        // volumeArray.shift();
+        // volumeArray.push(nv1, nv2);
+        // setVolumeArray([...volumeArray]);
+        addVolumes(nv1, nv2);
     });
 
     useSpeechRecognitionEvent("error", (event) => {
@@ -95,7 +112,7 @@ export default function TestScreenAudio() {
             </ScrollView>
             <View style={styles.bottomSection}>
 
-                <VolumeMeter volumeArray={volumeArray} />
+                <VolumeMeter volumeArray={volumeArray} style={styles.volumeMeter} />
 
                 {!recognizing ? (
                     <Button mode="contained" onPress={handleStart}> Start </Button>
@@ -122,12 +139,9 @@ const createStyles = theme => StyleSheet.create({
         marginBottom: 8,
     },
     bottomSection: {
-        // borderWidth: 1,
-        // borderColor: 'red',
-        // paddingTop: 15,
-        paddingBottom: 35,
+        paddingBottom: 25,
     },
-    progress: {
-        marginBottom: 15,
+    volumeMeter: {
+        marginBottom: 8,
     }
 });
