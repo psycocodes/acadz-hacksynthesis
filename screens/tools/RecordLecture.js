@@ -249,6 +249,11 @@ export default function RecordLectureScreen({ navigation }) {
     const handlePause = async () => {
         setShouldRecognize(false);
         ExpoSpeechRecognitionModule.stop();
+        if (IS_LOWER_API) {
+            const prefix = transcript ? transcript + ' ' : '';
+            setTranscript(prefix + preTranscript.trim() + '.');
+            setPreTranscript("");
+        }
     }
     const handleDone = async () => {
         navigation.navigate('Transcript', { transcript: transcript });
