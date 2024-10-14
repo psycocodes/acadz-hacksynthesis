@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Modal, Portal, Provider, Text } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { router } from 'expo-router';
-
 
 const NOT_LOADING = -1.0;
 
@@ -49,7 +48,7 @@ const ScanDoc = () => {
             const imageInfo = await FileSystem.getInfoAsync(imageUri);
             let imageSizeInMB = imageInfo.size / 1024 / 1024;
             if (imageSizeInMB > 1) {
-                const mratio = imageSizeInMB < 1.5 ? 0.7 : imageSizeInMB < 4 ? 0.5 : 0.1;
+                const mratio = imageSizeInMB<1.5 ? 0.7 : imageSizeInMB<4 ? 0.5 : 0.1;
                 const compressedImage = await compressImage(result.assets[0].uri, mratio);
                 imageUri = compressedImage.uri;
 
@@ -68,16 +67,16 @@ const ScanDoc = () => {
     const getData = async () => {
         setLoading(0.0);
         let fullDat = '';
-        for (let i = 0; i < images.length; i++) {
+        for (let i=0; i<images.length; i++) {
             const img = images[i];
             const dat = await performOCR(img.uri);
             fullDat += dat + "\n\n";
-            setLoading((i + 1) / images.length);
+            setLoading((i+1)/images.length);
         }
         await wait(500);
         setLoading(NOT_LOADING);
         // console.log(fullDat);
-        router.push({ pathname: '../transcript', params: { transcript: fullDat } });
+          router.push({ pathname: '../transcript', params: { transcript : fullDat } });
     }
 
     const performOCR = async (imgUri) => {
@@ -115,33 +114,32 @@ const ScanDoc = () => {
 
     return (
         <Provider>
-            <SafeAreaView className="h-full w-full bg-primary">
-                <View style={styles.container}>
-                    <Text className=" text-white font-psemibold text-lg">Scan a Document</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
-                        {images.map((image) => (
-                            <Image key={image.id} source={{ uri: image.uri }}
-                                style={[styles.image, image.id === lastImgId ? styles.lastImage : {}]} />
-                        ))}
-                    </ScrollView>
-                    <View style={styles.bottomButtons}>
-                        <Button mode="contained" style={styles.button} onPress={pickImage}>
-                            Add Image
-                        </Button>
-                        <Button mode="contained" style={styles.button} onPress={getData}>
-                            Get Data
-                        </Button>
-                    </View>
-                    {/* Overlay loading indicator */}
-                    <Portal>
-                        <Modal visible={loading !== NOT_LOADING} dismissable={false} contentContainerStyle={styles.modal}>
-                            <ActivityIndicator animating={true} size="large" />
-                            <Text style={styles.loadingText}>{`Loading... ${(100 * loading).toFixed(2)} %`}</Text>
-                        </Modal>
-                    </Portal>
-                </View>
-            </SafeAreaView>
+        <View style={styles.container}>
+            <Text style={styles.title}>Scan a Document</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
+                {images.map((image) => (
+                    <Image key={image.id} source={{ uri: image.uri }}
+                        style={[styles.image, image.id === lastImgId ? styles.lastImage : {}]} />
+                ))}
+            </ScrollView>
+            <View style={styles.bottomButtons}>
 
+                <Button mode="contained" style={styles.button} onPress={pickImage}>
+                    Add Image
+                </Button>
+                <Button mode="contained" style={styles.button} onPress={getData}>
+                    Get Data
+                </Button>
+            </View>
+            {/* Overlay loading indicator */}
+        <Portal>
+          <Modal visible={loading!==NOT_LOADING} dismissable={false} contentContainerStyle={styles.modal}>
+            <ActivityIndicator animating={true} size="large" />
+            <Text style={styles.loadingText}>{`Loading... ${(100*loading).toFixed(2)} %`}</Text>
+          </Modal>
+        </Portal>
+        </View>
+        
         </Provider>
     );
 };
@@ -152,6 +150,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 16,
+        backgroundColor: '#fff',
     },
     title: {
         fontSize: 20,
@@ -184,15 +183,15 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     modal: {
-        backgroundColor: '#00000055',
-        padding: 20,
-        borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
+      backgroundColor: '#00000055',
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     loadingText: {
-        marginTop: 10,
-        color: 'white',
+      marginTop: 10,
+      color: 'white',
     },
 });
 

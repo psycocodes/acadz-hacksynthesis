@@ -1,5 +1,5 @@
 
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, TextInput, Alert } from 'react-native';
 import { Provider, Text, Button  } from 'react-native-paper';
@@ -9,6 +9,7 @@ const TranscriptScreen = () => {
     const [editedTranscript, setEditedTranscript] = useState('');
     const [transcript, setTranscript] = useState(useLocalSearchParams().transcript);
     if (!transcript) Alert.alert('Transcript loading failed!');
+
 
     const startEdit = () => {
         setEditedTranscript(transcript);
@@ -22,15 +23,6 @@ const TranscriptScreen = () => {
     const cancelEdit = () => {
         setEditedTranscript('');
         setEditingMode(false);
-    }
-    const summarize = () => {
-        router.push({ pathname: '../summary', params: { transcript: transcript } });
-    }
-    const flashcards = () => {
-        router.push({ pathname: '../flashcards', params: { transcript: transcript } });
-    }
-    const ytSuggest = () => {
-        router.push({ pathname: '../yt-suggest', params: { transcript: transcript } });
     }
 
     return (
@@ -69,13 +61,13 @@ const TranscriptScreen = () => {
                             </Button>
                         </View>
                     }
-                    <Button mode="contained" disabled={editingMode} onPress={summarize}>
+                    <Button mode="contained" disabled={editingMode}>
                         Summarize
                     </Button>
-                    <Button mode="contained" disabled={editingMode} onPress={flashcards}>
+                    <Button mode="contained" disabled={editingMode}>
                         Flashcards
                     </Button>
-                    <Button mode="contained" disabled={editingMode} onPress={ytSuggest}>
+                    <Button mode="contained" disabled={editingMode}>
                         Youtube video suggestions
                     </Button>
                 </View>

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
+import { PaperProvider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 
 const HomeLayout = () => {
@@ -14,14 +15,16 @@ const HomeLayout = () => {
           }}
         />
         <Stack.Screen
-         name="notebook"
-         options={{
-           headerTitle: "",
-           headerStyle: {
-             backgroundColor: "#161622",
-           },
-           headerTintColor: "white",
-         }}
+          name="home-alt"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="add-new"
+          options={{
+            headerShown: false,
+          }}
         />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />

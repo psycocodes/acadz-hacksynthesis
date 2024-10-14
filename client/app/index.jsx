@@ -3,12 +3,17 @@ import React, { useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
+  StyleSheet,
+  Text,
   View,
   Image,
+  TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { Link, router, useRouter } from "expo-router";
 import { images } from "../constants/";
+import { CustomButton } from "../components";
+import { IconButton } from "react-native-paper";
 import { useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 
