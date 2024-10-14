@@ -1,0 +1,46 @@
+{
+    "expo": {
+        "name": "AcadZ",
+        "slug": "client",
+        "version": "0.2.1a",
+        "scheme": "acadz",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#111111"
+        },
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#111111"
+            },
+            "package": "com.asterisk.acadz"
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": [
+            [
+                "expo-speech-recognition",
+                {
+                    "microphonePermission": "Allow AcadZ to use the microphone.",
+                    "speechRecognitionPermission": "Allow AcadZ to use speech recognition.",
+                    "androidSpeechServicePackages": [
+                        "com.google.android.googlequicksearchbox"
+                    ]
+                }
+            ]
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "2e3afbe0-fc60-4cec-b16f-9d5dbdce67ff"
+            }
+        }
+    }
+}
