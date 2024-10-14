@@ -14,10 +14,14 @@ const HomeLayout = () => {
           }}
         />
         <Stack.Screen
-          name="notebook"
-          options={{
-            headerShown: false,
-          }}
+         name="notebook"
+         options={{
+           headerTitle: "",
+           headerStyle: {
+             backgroundColor: "#161622",
+           },
+           headerTintColor: "white",
+         }}
         />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
