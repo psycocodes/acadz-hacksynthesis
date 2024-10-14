@@ -6,9 +6,54 @@ import {
     ExpoSpeechRecognitionModule,
     useSpeechRecognitionEvent,
     addSpeechRecognitionListener,
+    supportsRecording,
+    getSupportedLocales,
+    androidTriggerOfflineModelDownload
 } from "expo-speech-recognition";
 
 import VolumeMeter, { getInitialVolumeArray } from "../../components/VolumeMeter";
+
+
+
+// import { Platform } from 'react-native';
+// const IS_LOWER_API = parseInt(Platform.constants['Release']) <= 12;
+const IS_LOWER_API = !supportsRecording();
+const PREFERRED_LOCALE = 'en-IN';
+
+const ensureLocalePresent = async (setLocalePresent) => {
+    if (IS_LOWER_API) return;
+
+    const onError1 = err => console.error("Error getting supported locales:", err);
+    const onError2 = err => console.log("Failed to download en-IN offline model!", err.message);
+
+    const supportedLocales = await getSupportedLocales().catch(onError1);
+
+    if (supportedLocales.installedLocales.includes(PREFERRED_LOCALE)) {
+        setLocalePresent(true);
+        return;
+    }
+    else if (!supportedLocales.locales.includes(supportedLocales.locales)) {
+        return;
+    }
+
+    const result = await androidTriggerOfflineModelDownload({ locale: PREFERRED_LOCALE }).catch(onError2);
+
+    switch (result.status) {
+        case "opened_dialog":
+            // On Android 13, the status will be "opened_dialog" indicating that the model download dialog was opened.
+            console.log("en-IN offline model download dialog opened.");
+            break;
+        case "download_success":
+            // On Android 14+, model was succesfully downloaded.
+            console.log("en-IN offline model downloaded successfully!");
+            setLocalePresent(true);
+            return;
+        case "download_canceled":
+            // On Android 14+, the download was canceled by a user interaction.
+            console.log("en-IN offline model download was canceled.");
+            break;
+    }
+}
 
 async function sendForTranscription(audioUrl, setter) {
     try {
@@ -79,6 +124,7 @@ export default function RecordLectureScreen({ navigation }) {
     const [transcript, setTranscript] = useState("");
     const [preTranscript, setPreTranscript] = useState("");
     const [volumeArray, setVolumeArray] = useState(getInitialVolumeArray()); // Initialize bars with zero height 
+    const [localePresent, setLocalePresent] = useState(false);
 
 
     const handleTranscriptionFromUrl = async () => {
@@ -94,6 +140,10 @@ export default function RecordLectureScreen({ navigation }) {
     };
 
     useEffect(() => {
+        ensureLocalePresent(setLocalePresent);
+    }, []);
+
+    useEffect(() => {
         navigation.setOptions({
             headerRight: () => (<IconButton
                 icon={transcribeFromUrl ? "microphone" : "link"}
@@ -105,18 +155,43 @@ export default function RecordLectureScreen({ navigation }) {
     }, [transcript, shouldRecognize, recognizing, transcribeFromUrl]);
 
     useEffect(() => {
+        if (IS_LOWER_API) return;
+
         const resultListener = addSpeechRecognitionListener("result", (event) => {
             // console.log(event.isFinal, event.results[0]);
+            const resultTrans = event.results[0]?.transcript;
             if (event.isFinal) {
-                setTranscript(transcript + event.results[0]?.transcript);
+                setTranscript(transcript + resultTrans);
                 setPreTranscript("");
             }
             else {
-                setPreTranscript(event.results[0]?.transcript);
+                setPreTranscript(resultTrans);
             }
         });
         return resultListener.remove;
     }, [transcript]);
+
+    useEffect(() => {
+        if (false === IS_LOWER_API) return;
+
+        const resultListener = addSpeechRecognitionListener("result", (event) => {
+            // console.log(event.isFinal, event.results[0]);
+            const resultTrans = event.results[0]?.transcript;
+            const isFinal = (preTranscript === resultTrans) || (preTranscript.length > resultTrans.length + 1);
+
+            // console.log(preTranscript.length, resultTrans.length, resultTrans);
+
+            if (isFinal) {
+                const prefix = transcript ? transcript + ' ' : '';
+                setTranscript(prefix + preTranscript.trim() + '.');
+                setPreTranscript("");
+            }
+            else {
+                setPreTranscript(' ' + resultTrans);
+            }
+        });
+        return resultListener.remove;
+    }, [transcript, preTranscript]);
 
     useEffect(() => {
         const errorListener = addSpeechRecognitionListener("error", (event) => {
@@ -161,29 +236,38 @@ export default function RecordLectureScreen({ navigation }) {
         }
         setShouldRecognize(true);
 
-        // Start speech recognition
-        ExpoSpeechRecognitionModule.start({
-            lang: "en-IN",
+        const speechOptions = {
+            // if present, lang: "en-IN",
             interimResults: true,
             maxAlternatives: 1,
             continuous: true,
             requiresOnDeviceRecognition: true,
             addsPunctuation: true,
             androidIntentOptions: {
-                EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS: 10000,
-                EXTRA_MASK_OFFENSIVE_WORDS: false,
+                EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS: 10000
+                // if android 13+, EXTRA_MASK_OFFENSIVE_WORDS = false
             },
-            // recordingOptions: {
-            //     persist: true,
-            //     outputDirectory: undefined,
-            //     outputFileName: "recording.wav",
-            // },
             contextualStrings: ["AcadZ"],
             volumeChangeEventOptions: {
                 enabled: true,
                 intervalMillis: 300,
             },
-        });
+        };
+
+        if (localePresent)
+            speechOptions.lang = PREFERRED_LOCALE;
+
+        if (!IS_LOWER_API)
+            speechOptions.androidIntentOptions.EXTRA_MASK_OFFENSIVE_WORDS = false;
+
+        // speechOptions.recordingOptions = {
+        //     persist: true,
+        //     outputDirectory: undefined,
+        //     outputFileName: "recording.wav",
+        // };
+
+        // Start speech recognition
+        ExpoSpeechRecognitionModule.start(speechOptions);
     };
     const handlePause = async () => {
         setShouldRecognize(false);
@@ -215,7 +299,7 @@ export default function RecordLectureScreen({ navigation }) {
                     </ScrollView>
                     <View style={styles.bottomSection}>
 
-                        <VolumeMeter volumeArray={volumeArray} style={styles.volumeMeter} />
+                        {/* <VolumeMeter volumeArray={volumeArray} style={styles.volumeMeter} /> */}
 
                         <View style={styles.bottomButtonsContainer}>
                             {!recognizing ? (

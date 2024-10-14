@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Button, IconButton, useTheme } from "react-native-paper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,6 +31,7 @@ const NotebookScreen = ({ navigation, route }) => {
         //         iconColor={theme.colors.onPrimaryContainer}
         //     />)
         // });
+        Alert.alert('Under development', 'Sorry for the inconvenience! This page is under development. Hence, any transcripts, summaries, flashcards, etc, you create will NOT be saved!')
     }, [navigation]);
 
     // const loadDatas = async () => {

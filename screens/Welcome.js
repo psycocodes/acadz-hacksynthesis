@@ -1,11 +1,29 @@
-import React from "react";
-import { View, Image, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { View, Image, StyleSheet, Alert } from "react-native";
 import { Images } from "../constants/";
-import { useTheme, Button, Text } from "react-native-paper";
+import { useTheme, Button, Text, IconButton } from "react-native-paper";
 
+const app_info = `
+Version: 0.2.0a (alpha)
+Date: 12-10-2024
+Devs: Mohikshit Ghorai, Pritam Das, Suparno Saha
+
+Initially made for #HackSynthesis 2024 hackathon at UEM, Newton, Kolkata
+`.trim();
 
 export default function WelcomeScreen({ navigation }) {
-    const styles = createStyles(useTheme());
+    const theme = useTheme();
+    const styles = createStyles(theme);
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (<IconButton
+                icon="information-outline"
+                onPress={() => Alert.alert('App Info', app_info)}
+                iconColor={theme.colors.onPrimaryContainer}
+            />)
+        });
+    }, []);
     return (
         <View style={styles.container}>
             <Image
