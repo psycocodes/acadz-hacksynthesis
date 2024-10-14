@@ -11,7 +11,7 @@ import {
     androidTriggerOfflineModelDownload
 } from "expo-speech-recognition";
 
-import VolumeMeter, { getInitialVolumeArray } from "../../components/VolumeMeter";
+import VolumeMeter from "../../components/VolumeMeter";
 
 
 
@@ -123,7 +123,6 @@ export default function RecordLectureScreen({ navigation }) {
     const [shouldRecognize, setShouldRecognize] = useState(false);
     const [transcript, setTranscript] = useState("");
     const [preTranscript, setPreTranscript] = useState("");
-    const [volumeArray, setVolumeArray] = useState(getInitialVolumeArray()); // Initialize bars with zero height 
     const [localePresent, setLocalePresent] = useState(false);
 
 
@@ -205,28 +204,6 @@ export default function RecordLectureScreen({ navigation }) {
     useSpeechRecognitionEvent("start", () => setRecognizing(true));
     useSpeechRecognitionEvent("end", () => setRecognizing(false));
 
-    function timeout(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    const addVolumes = async (nv1, nv2) => {
-        await timeout(300);
-        volumeArray.shift();
-        volumeArray.push(nv1);
-        setVolumeArray([...volumeArray]);
-        await timeout(300);
-        volumeArray.shift();
-        volumeArray.push(nv2);
-        setVolumeArray([...volumeArray]);
-    }
-
-    useSpeechRecognitionEvent("volumechange", (event) => {
-        const lastVol = volumeArray[volumeArray.length - 1];
-        const currVol = (event.value + 2) / 12;
-        const nv1 = (lastVol + currVol) / 2;
-        const nv2 = (nv1 + currVol) / 2;
-        addVolumes(nv1, nv2);
-    });
-
     const handleStart = async () => {
         const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
         if (!result.granted) {
@@ -299,7 +276,7 @@ export default function RecordLectureScreen({ navigation }) {
                     </ScrollView>
                     <View style={styles.bottomSection}>
 
-                        {/* <VolumeMeter volumeArray={volumeArray} style={styles.volumeMeter} /> */}
+                        <VolumeMeter style={styles.volumeMeter} />
 
                         <View style={styles.bottomButtonsContainer}>
                             {!recognizing ? (
@@ -365,13 +342,12 @@ const createStyles = theme => StyleSheet.create({
         borderColor: theme.colors.primary,
         borderRadius: 10,
         padding: 8,
-        marginBottom: 8,
     },
     bottomSection: {
         paddingBottom: 25,
     },
     volumeMeter: {
-        marginBottom: 8,
+        // marginTop: 15,
     },
     bottomButtonsContainer: {
         flexDirection: 'row',
