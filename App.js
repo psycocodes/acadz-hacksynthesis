@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { PaperProvider, MD3DarkTheme, MD2LightTheme } from 'react-native-paper';
+import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
 
 // Importing Screens
 import WelcomeScreen from './screens/Welcome';

@@ -129,7 +129,6 @@ const FlashcardsScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         onAppear();
-        Alert.alert('Under development', 'Sorry for the inconvenience! This page is under development. Hence, some buttons might not work!');
     }, []);
 
     const parseResult = (res) => {

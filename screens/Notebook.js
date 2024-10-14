@@ -16,23 +16,22 @@ const NotebookScreen = ({ navigation, route }) => {
     const [ytsugg, setYtsugg] = useState(null);
 
 
-    useEffect(() => {
-        // loadDatas();
+    // useEffect(() => {
+    //     loadDatas();
 
-        // navigation.setOptions({
-        //     headerLeft: () => (<IconButton
-        //         icon='arrow-left'
-        //         onPress={navigation.goBack}
-        //         iconColor={theme.colors.onPrimaryContainer}
-        //     />),
-        //     headerRight: () => (<IconButton
-        //         icon="dots-vertical"
-        //         // onPress={clearStorage}
-        //         iconColor={theme.colors.onPrimaryContainer}
-        //     />)
-        // });
-        Alert.alert('Under development', 'Sorry for the inconvenience! This page is under development. Hence, any transcripts, summaries, flashcards, etc, you create will NOT be saved!')
-    }, [navigation]);
+    //     navigation.setOptions({
+    //         headerLeft: () => (<IconButton
+    //             icon='arrow-left'
+    //             onPress={navigation.goBack}
+    //             iconColor={theme.colors.onPrimaryContainer}
+    //         />),
+    //         headerRight: () => (<IconButton
+    //             icon="dots-vertical"
+    //             // onPress={clearStorage}
+    //             iconColor={theme.colors.onPrimaryContainer}
+    //         />)
+    //     });
+    // }, [navigation]);
 
     // const loadDatas = async () => {
     //     try {

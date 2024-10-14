@@ -2,7 +2,7 @@
     "expo": {
         "name": "AcadZ",
         "slug": "client",
-        "version": "0.2.0a",
+        "version": "0.2.1a",
         "scheme": "acadz",
         "orientation": "portrait",
         "icon": "./assets/icon.png",

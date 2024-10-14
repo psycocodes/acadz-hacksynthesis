@@ -4,8 +4,8 @@ import { Images } from "../constants/";
 import { useTheme, Button, Text, IconButton } from "react-native-paper";
 
 const app_info = `
-Version: 0.2.0a (alpha)
-Date: 12-10-2024
+Version: 0.2.1a (alpha)
+Date: 15-10-2024
 Devs: Mohikshit Ghorai, Pritam Das, Suparno Saha
 
 Initially made for #HackSynthesis 2024 hackathon at UEM, Newton, Kolkata
@@ -44,14 +44,12 @@ export default function WelcomeScreen({ navigation }) {
                 onPress={() => navigation.navigate("Home")}>
                 Continue to Dashboard
             </Button>
-            <Button
-                icon="chevron-right"
-                mode="outlined"
-                style={styles.button}
-                disabled={true}
-                onPress={() => navigation.navigate("TestAudio")}>
-                Test button
-            </Button>
+
+            <Text style={styles.infoText}>
+                This app is currently in alpha stage. All features are not available yet!{'\n\n'}
+                Any transcript/summary/flashcards etc, you add/generate are NOT saved.{'\n\n'}
+                We are sorry for the inconvenience!
+            </Text>
         </View>
     );
 }
@@ -60,7 +58,7 @@ export default function WelcomeScreen({ navigation }) {
 const createStyles = theme => StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
+        paddingTop: 100,
         backgroundColor: theme.colors.background,
     },
     animatedImage: {
@@ -73,19 +71,26 @@ const createStyles = theme => StyleSheet.create({
         alignItems: "center",
     },
     welcomeText: {
-        // fontFamily: "Poppins-Regular",
         fontSize: 18,
         color: "white",
         paddingHorizontal: 10,
-        paddingVertical: 5,
-        paddingTop: 2,
+        paddingBottom: 10,
     },
     boldText: {
-        // fontFamily: "Poppins-Bold",
         fontSize: 24,
+        fontWeight: 'bold',
     },
     button: {
         marginHorizontal: 16,
         marginBottom: 16,
     },
+
+    infoText: {
+        borderTopWidth: 1,
+        borderColor: theme.colors.tertiary,
+        paddingTop: 15,
+        marginTop: 15,
+        color: theme.colors.tertiary,
+        paddingHorizontal: 16,
+    }
 });
